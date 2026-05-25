@@ -1,0 +1,379 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.lp-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+}
+.lp-logo { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+.logo-box { width: 30px; height: 30px; background: #1D9E75; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.lp-navlinks { display: flex; gap: 24px; }
+.lp-navlinks a { font-size: 13px; color: var(--color-text-secondary); text-decoration: none; }
+.lp-navlinks a:hover { color: var(--color-text-primary); }
+.lp-nav-btn { background: #1D9E75; color: white; border: none; border-radius: 100px; padding: 8px 18px; font-size: 13px; cursor: pointer; }
+
+.lp-hero {
+  display: grid; grid-template-columns: 1fr 1fr;
+  padding: 56px 28px 48px;
+  gap: 40px;
+  background: var(--color-background-primary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.hero-left { display: flex; flex-direction: column; justify-content: center; }
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #E1F5EE; border: 0.5px solid #9FE1CB;
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 11px; font-weight: 500; color: #085041;
+  width: fit-content; margin-bottom: 18px;
+}
+.pill-dot { width: 6px; height: 6px; background: #1D9E75; border-radius: 50%; }
+.hero-h1 { font-size: 36px; font-weight: 500; line-height: 1.1; color: var(--color-text-primary); margin-bottom: 14px; }
+.hero-h1 span { color: #1D9E75; }
+.hero-sub { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 28px; max-width: 380px; }
+.hero-btns { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.btn-green { background: #1D9E75; color: white; border: none; border-radius: 100px; padding: 10px 22px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.btn-outline { background: transparent; color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); border-radius: 100px; padding: 10px 22px; font-size: 13px; cursor: pointer; }
+.hero-trust { display: flex; align-items: center; gap: 12px; }
+.trust-faces { display: flex; }
+.face { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-background-primary); margin-left: -8px; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; color: white; }
+.face:first-child { margin-left: 0; }
+.trust-txt { font-size: 12px; color: var(--color-text-secondary); }
+.trust-txt b { color: var(--color-text-primary); font-weight: 500; }
+
+.hero-right { display: flex; align-items: center; justify-content: center; }
+.phone-frame {
+  width: 240px;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 24px;
+  overflow: hidden;
+}
+.phone-topbar { background: #1D9E75; padding: 14px 16px 18px; }
+.phone-topbar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.phone-greeting { font-size: 10px; color: rgba(255,255,255,0.7); }
+.phone-name { font-size: 14px; font-weight: 500; color: white; }
+.phone-avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.2); font-size: 11px; color: white; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+.phone-searchbar { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 7px 10px; font-size: 11px; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 6px; }
+.phone-body { padding: 12px; }
+.phone-map { height: 90px; background: #E8F0E0; border-radius: 10px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.map-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px); background-size: 28px 28px; }
+.you-dot { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 10px; height: 10px; background: #1D9E75; border-radius: 50%; border: 2px solid white; }
+.you-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 22px; height: 22px; border-radius: 50%; background: rgba(29,158,117,0.15); }
+.mpin { position: absolute; display: flex; flex-direction: column; align-items: center; }
+.mpin-c { width: 22px; height: 22px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+.mpin-l { font-size: 7px; background: white; border-radius: 3px; padding: 1px 3px; margin-top: 1px; color: #2C2C2A; white-space: nowrap; }
+.nearby-label { font-size: 10px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px; }
+.vc { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: 10px; margin-bottom: 6px; }
+.vc.active { border-color: #1D9E75; background: #E1F5EE; }
+.vc-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.vc-name { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.vc-spec { font-size: 9px; color: var(--color-text-secondary); margin-top: 1px; }
+.vc-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.vc-dist { font-size: 9px; color: var(--color-text-secondary); }
+.avl { font-size: 8px; font-weight: 500; padding: 2px 5px; border-radius: 4px; }
+.avl-open { background: #E1F5EE; color: #085041; }
+.avl-busy { background: #FAEEDA; color: #633806; }
+
+.lp-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  background: var(--color-background-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.stat { padding: 24px 28px; border-right: 0.5px solid var(--color-border-tertiary); }
+.stat:last-child { border-right: none; }
+.stat-n { font-size: 26px; font-weight: 500; color: #1D9E75; }
+.stat-l { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.lp-features {
+  padding: 56px 28px;
+  background: var(--color-background-primary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.feat-header { text-align: center; margin-bottom: 36px; }
+.feat-tag { display: inline-block; background: #E1F5EE; color: #085041; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px; margin-bottom: 12px; }
+.feat-h2 { font-size: 24px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.feat-sub { font-size: 13px; color: var(--color-text-secondary); }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.feat-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 20px; }
+.feat-icon { width: 36px; height: 36px; border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 18px; }
+.feat-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.feat-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+.lp-how {
+  padding: 56px 28px;
+  background: var(--color-background-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.how-header { margin-bottom: 36px; }
+.how-tag { display: inline-block; background: #FAEEDA; color: #633806; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px; margin-bottom: 12px; }
+.how-h2 { font-size: 24px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
+.how-sub { font-size: 13px; color: var(--color-text-secondary); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.step { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 20px; position: relative; }
+.step-num { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.step-line { flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+.step-icon { font-size: 22px; margin-bottom: 10px; }
+.step-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.step-desc { font-size: 11px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.lp-cta {
+  padding: 56px 28px;
+  background: #085041;
+  text-align: center;
+}
+.cta-h2 { font-size: 28px; font-weight: 500; color: white; margin-bottom: 10px; }
+.cta-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 28px; }
+.cta-btns { display: flex; justify-content: center; gap: 12px; }
+.cta-btn-white { background: white; color: #085041; border: none; border-radius: 100px; padding: 11px 26px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.cta-btn-out { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 100px; padding: 11px 26px; font-size: 13px; cursor: pointer; }
+
+.lp-footer {
+  padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+}
+.footer-logo { font-size: 14px; font-weight: 500; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 12px; color: var(--color-text-secondary); text-decoration: none; }
+.footer-copy { font-size: 12px; color: var(--color-text-secondary); }
+</style>
+
+<h2 class="sr-only">PawFinder landing page — find nearby vets, chat and book appointments</h2>
+
+<nav class="lp-nav">
+  <div class="lp-logo">
+    <div class="logo-box">
+      <i class="ti ti-paw" style="font-size:16px; color:white;" aria-hidden="true"></i>
+    </div>
+    PawFinder
+  </div>
+  <div class="lp-navlinks">
+    <a href="#">Find vets</a>
+    <a href="#">For clinics</a>
+    <a href="#">How it works</a>
+  </div>
+  <button class="lp-nav-btn">Get started</button>
+</nav>
+
+<div class="lp-hero">
+  <div class="hero-left">
+    <div class="hero-pill">
+      <div class="pill-dot"></div>
+      New in your city? We've got you
+    </div>
+    <h1 class="hero-h1">Find a trusted vet,<br><span>anywhere in India</span></h1>
+    <p class="hero-sub">Just moved to a new city with your pet? Don't panic. PawFinder helps you find nearby verified vets, chat before you visit, and book appointments instantly.</p>
+    <div class="hero-btns">
+      <button class="btn-green">
+        <i class="ti ti-map-pin" style="font-size:14px;" aria-hidden="true"></i>
+        Find vets near me
+      </button>
+      <button class="btn-outline">Register your clinic</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-faces">
+        <div class="face" style="background:#1D9E75;">RS</div>
+        <div class="face" style="background:#BA7517;">AM</div>
+        <div class="face" style="background:#D85A30;">KP</div>
+        <div class="face" style="background:#534AB7;">NV</div>
+      </div>
+      <div class="trust-txt"><b>2,400+ pet owners</b> found a vet this month</div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-frame">
+      <div class="phone-topbar">
+        <div class="phone-topbar-row">
+          <div>
+            <div class="phone-greeting">Good morning,</div>
+            <div class="phone-name">Rahul & Bruno</div>
+          </div>
+          <div class="phone-avatar">RS</div>
+        </div>
+        <div class="phone-searchbar">
+          <i class="ti ti-search" style="font-size:12px; color:rgba(255,255,255,0.7);" aria-hidden="true"></i>
+          Search vets, specializations...
+        </div>
+      </div>
+      <div class="phone-body">
+        <div class="phone-map">
+          <div class="map-grid-bg"></div>
+          <div class="you-ring"></div>
+          <div class="you-dot"></div>
+          <div class="mpin" style="left:28%; top:22%;">
+            <div class="mpin-c" style="background:#9FE1CB;">🏥</div>
+            <div class="mpin-l">0.8 km</div>
+          </div>
+          <div class="mpin" style="left:62%; top:18%;">
+            <div class="mpin-c" style="background:#FAC775;">🏥</div>
+            <div class="mpin-l">1.4 km</div>
+          </div>
+          <div class="mpin" style="left:70%; top:58%;">
+            <div class="mpin-c" style="background:#9FE1CB;">🏥</div>
+            <div class="mpin-l">2.1 km</div>
+          </div>
+        </div>
+        <div class="nearby-label">3 vets found nearby</div>
+        <div class="vc active">
+          <div class="vc-icon" style="background:#E1F5EE;">👩‍⚕️</div>
+          <div>
+            <div class="vc-name">Dr. Priya Sharma</div>
+            <div class="vc-spec">Dogs · Cats · Small animals</div>
+          </div>
+          <div class="vc-right">
+            <div class="vc-dist">0.8 km</div>
+            <div class="avl avl-open">Open</div>
+          </div>
+        </div>
+        <div class="vc">
+          <div class="vc-icon" style="background:#FAEEDA;">👨‍⚕️</div>
+          <div>
+            <div class="vc-name">Dr. Arjun Mehta</div>
+            <div class="vc-spec">All pets · Surgery</div>
+          </div>
+          <div class="vc-right">
+            <div class="vc-dist">1.4 km</div>
+            <div class="avl avl-busy">Busy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lp-stats">
+  <div class="stat">
+    <div class="stat-n">1,200+</div>
+    <div class="stat-l">Verified vets listed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">48 cities</div>
+    <div class="stat-l">Across India</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">&lt;3 min</div>
+    <div class="stat-l">Avg time to book</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">4.8 ★</div>
+    <div class="stat-l">Average vet rating</div>
+  </div>
+</div>
+
+<div class="lp-features">
+  <div class="feat-header">
+    <div class="feat-tag">Why PawFinder</div>
+    <div class="feat-h2">Everything you need when you're new in town</div>
+    <div class="feat-sub">Built for pet owners who are far from home</div>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E1F5EE;">
+        <i class="ti ti-map-pin" style="font-size:18px; color:#1D9E75;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Nearby vet discovery</div>
+      <div class="feat-desc">See verified vets on a live map sorted by distance, rating, and availability — no guessing, no Google juggling.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E1F5EE;">
+        <i class="ti ti-message-circle" style="font-size:18px; color:#1D9E75;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Chat before you visit</div>
+      <div class="feat-desc">Message the clinic in real time — ask about fees, wait time, or whether they treat your pet's breed — before making the trip.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E1F5EE;">
+        <i class="ti ti-calendar-check" style="font-size:18px; color:#1D9E75;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Instant appointment booking</div>
+      <div class="feat-desc">Pick a slot, confirm in one tap. No phone calls. Get email reminders so you never miss a visit.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FAEEDA;">
+        <i class="ti ti-file-text" style="font-size:18px; color:#BA7517;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Pet health records</div>
+      <div class="feat-desc">Store vaccination history, prescriptions, and allergies. Share with any vet instantly — your pet's history travels with you.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FAEEDA;">
+        <i class="ti ti-shield-check" style="font-size:18px; color:#BA7517;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Verified profiles only</div>
+      <div class="feat-desc">Every vet is manually verified with license details, clinic photos, and real patient reviews. No spam listings.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FAEEDA;">
+        <i class="ti ti-clock" style="font-size:18px; color:#BA7517;" aria-hidden="true"></i>
+      </div>
+      <div class="feat-title">Emergency vet finder</div>
+      <div class="feat-desc">Filter by "open now" or "24-hour" to find emergency care fast. Because pet emergencies don't wait for business hours.</div>
+    </div>
+  </div>
+</div>
+
+<div class="lp-how">
+  <div class="how-header">
+    <div class="how-tag">How it works</div>
+    <div class="how-h2">Go from worried to booked in under 3 minutes</div>
+    <div class="how-sub">Simple steps for stressful moments</div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01 <div class="step-line"></div></div>
+      <div class="step-icon"><i class="ti ti-map-pin" style="font-size:22px; color:#1D9E75;" aria-hidden="true"></i></div>
+      <div class="step-title">Allow location</div>
+      <div class="step-desc">We detect your city and instantly show nearby verified vets on a live map.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02 <div class="step-line"></div></div>
+      <div class="step-icon"><i class="ti ti-search" style="font-size:22px; color:#1D9E75;" aria-hidden="true"></i></div>
+      <div class="step-title">Filter & browse</div>
+      <div class="step-desc">Filter by specialty, distance, rating, or availability to find the right vet for your pet.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03 <div class="step-line"></div></div>
+      <div class="step-icon"><i class="ti ti-message-circle" style="font-size:22px; color:#1D9E75;" aria-hidden="true"></i></div>
+      <div class="step-title">Chat first</div>
+      <div class="step-desc">Send a quick message to the vet before committing — confirm timing, fees, or your pet's condition.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04 <div class="step-line"></div></div>
+      <div class="step-icon"><i class="ti ti-calendar-check" style="font-size:22px; color:#1D9E75;" aria-hidden="true"></i></div>
+      <div class="step-title">Book & go</div>
+      <div class="step-desc">Pick a slot and confirm. You'll get a reminder email. Just show up — your pet's info is already shared.</div>
+    </div>
+  </div>
+</div>
+
+<div class="lp-cta">
+  <div class="cta-h2">Your pet deserves care,<br>wherever you are</div>
+  <div class="cta-sub">Join thousands of pet owners who found their vet in a new city with PawFinder</div>
+  <div class="cta-btns">
+    <button class="cta-btn-white" onclick="sendPrompt('Help me start building the PawFinder MERN app — where do I begin?')">Start building this ↗</button>
+    <button class="cta-btn-out">List your clinic</button>
+  </div>
+</div>
+
+<footer class="lp-footer">
+  <div class="footer-logo">
+    <div class="logo-box" style="width:22px; height:22px; border-radius:6px;">
+      <i class="ti ti-paw" style="font-size:12px; color:white;" aria-hidden="true"></i>
+    </div>
+    PawFinder
+  </div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+    <a href="#">For vets</a>
+  </div>
+  <div class="footer-copy">© 2025 PawFinder</div>
+</footer>

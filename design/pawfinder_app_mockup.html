@@ -1,0 +1,226 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Georgia', serif; }
+  :root {
+    --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5; --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041;
+    --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-400: #BA7517; --amber-800: #633806;
+    --coral-50: #FAECE7; --coral-200: #F0997B; --coral-600: #993C1D;
+    --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-200: #B4B2A9; --gray-600: #5F5E5A; --gray-800: #2C2C2A;
+  }
+  .app { background: var(--color-background-tertiary, #f5f4f0); min-height: 600px; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--color-border-tertiary); }
+  .topbar { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 28px; height: 28px; background: var(--teal-400); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-paw { width: 16px; height: 16px; }
+  .logo-text { font-size: 15px; font-weight: 500; color: var(--teal-600); letter-spacing: -0.3px; }
+  .location-pill { display: flex; align-items: center; gap: 6px; background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--teal-600); }
+  .loc-dot { width: 6px; height: 6px; background: var(--teal-400); border-radius: 50%; }
+  .avatar { width: 30px; height: 30px; background: var(--amber-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: var(--amber-800); }
+  .body { display: grid; grid-template-columns: 260px 1fr; min-height: 560px; }
+  .sidebar { background: var(--color-background-primary); border-right: 0.5px solid var(--color-border-tertiary); padding: 16px; display: flex; flex-direction: column; gap: 20px; }
+  .pet-card { background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 12px; padding: 14px; }
+  .pet-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .pet-avatar { width: 38px; height: 38px; background: var(--teal-200); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .pet-name { font-size: 14px; font-weight: 500; color: var(--teal-800); }
+  .pet-sub { font-size: 11px; color: var(--teal-600); margin-top: 1px; }
+  .pet-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { background: white; border: 0.5px solid var(--teal-100); border-radius: 6px; padding: 3px 8px; font-size: 10px; color: var(--teal-600); }
+  .section-label { font-size: 10px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; transition: background 0.15s; }
+  .nav-item.active { background: var(--teal-50); color: var(--teal-600); font-weight: 500; }
+  .nav-icon { width: 16px; height: 16px; opacity: 0.7; }
+  .appt-mini { background: var(--amber-50); border: 0.5px solid var(--amber-100); border-radius: 10px; padding: 12px; }
+  .appt-title { font-size: 12px; font-weight: 500; color: var(--amber-800); margin-bottom: 4px; }
+  .appt-detail { font-size: 11px; color: var(--amber-400); }
+  .appt-time { font-size: 13px; font-weight: 500; color: var(--amber-800); margin-top: 6px; }
+  .main { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .search-bar { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+  .search-input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--color-text-primary); outline: none; font-family: inherit; }
+  .search-input::placeholder { color: var(--color-text-secondary); }
+  .filter-btn { background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 6px; padding: 5px 10px; font-size: 11px; color: var(--teal-600); cursor: pointer; white-space: nowrap; }
+  .map-area { background: var(--gray-50); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; height: 180px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .map-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--gray-100) 1px, transparent 1px), linear-gradient(90deg, var(--gray-100) 1px, transparent 1px); background-size: 32px 32px; }
+  .map-pin { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+  .pin-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white; }
+  .pin-label { font-size: 9px; font-weight: 500; background: white; border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; padding: 2px 5px; white-space: nowrap; }
+  .user-pin { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 14px; height: 14px; background: var(--teal-400); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 4px rgba(29,158,117,0.2); }
+  .vet-list-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); }
+  .vet-cards { display: flex; flex-direction: column; gap: 10px; }
+  .vet-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 14px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .vet-card:hover { border-color: var(--teal-200); }
+  .vet-card.featured { border-color: var(--teal-200); border-width: 1.5px; }
+  .vet-img { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .vet-info { flex: 1; }
+  .vet-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .vet-spec { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .vet-meta { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+  .stars { font-size: 11px; color: var(--amber-400); }
+  .dist { font-size: 11px; color: var(--color-text-secondary); }
+  .avail-badge { font-size: 10px; background: var(--teal-50); color: var(--teal-600); border-radius: 4px; padding: 2px 7px; border: 0.5px solid var(--teal-100); }
+  .avail-badge.busy { background: var(--coral-50); color: var(--coral-600); border-color: var(--coral-200); }
+  .vet-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+  .btn-chat { background: var(--teal-50); border: 0.5px solid var(--teal-100); border-radius: 6px; padding: 5px 10px; font-size: 11px; color: var(--teal-600); cursor: pointer; white-space: nowrap; }
+  .btn-book { background: var(--teal-400); border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; color: white; cursor: pointer; white-space: nowrap; }
+  .chat-bubble { position: absolute; bottom: 20px; right: 20px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 12px; width: 200px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .chat-from { font-size: 10px; color: var(--teal-600); font-weight: 500; margin-bottom: 4px; }
+  .chat-msg { font-size: 11px; color: var(--color-text-primary); line-height: 1.4; }
+  .chat-reply { margin-top: 8px; display: flex; gap: 6px; }
+  .chat-input { flex: 1; border: 0.5px solid var(--color-border-tertiary); border-radius: 6px; padding: 5px 8px; font-size: 10px; color: var(--color-text-primary); background: var(--color-background-secondary); }
+  .chat-send { background: var(--teal-400); border: none; border-radius: 6px; padding: 5px 8px; font-size: 10px; color: white; cursor: pointer; }
+</style>
+
+<div class="app">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg class="logo-paw" viewBox="0 0 24 24" fill="none">
+          <ellipse cx="9" cy="6" rx="2.5" ry="3" fill="white" opacity="0.9"/>
+          <ellipse cx="15" cy="6" rx="2.5" ry="3" fill="white" opacity="0.9"/>
+          <ellipse cx="5.5" cy="11" rx="2" ry="2.5" fill="white" opacity="0.9"/>
+          <ellipse cx="18.5" cy="11" rx="2" ry="2.5" fill="white" opacity="0.9"/>
+          <path d="M12 10c-4 0-7 3-5.5 6.5 1 2.5 3 3.5 5.5 3.5s4.5-1 5.5-3.5C19 13 16 10 12 10z" fill="white"/>
+        </svg>
+      </div>
+      <span class="logo-text">PawFinder</span>
+    </div>
+    <div class="location-pill">
+      <div class="loc-dot"></div>
+      Sector 17, Chandigarh
+    </div>
+    <div class="avatar">RS</div>
+  </div>
+
+  <div class="body">
+    <div class="sidebar">
+      <div class="pet-card">
+        <div class="pet-header">
+          <div class="pet-avatar">🐕</div>
+          <div>
+            <div class="pet-name">Bruno</div>
+            <div class="pet-sub">Labrador · 3 yrs · Male</div>
+          </div>
+        </div>
+        <div class="pet-tags">
+          <span class="tag">Vaccinated</span>
+          <span class="tag">Neutered</span>
+          <span class="tag">No allergies</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Menu</div>
+        <div class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          Find vets nearby
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 2v2M11 2v2M2 7h12"/></svg>
+          My appointments
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12L6 4l4 5 3-3 3 5H2z"/></svg>
+          Pet records
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
+          Profile
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Upcoming</div>
+        <div class="appt-mini">
+          <div class="appt-title">Dr. Priya Sharma</div>
+          <div class="appt-detail">General checkup · Bruno</div>
+          <div class="appt-time">Mon, May 5 · 11:00 AM</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="search-bar">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--color-text-secondary)" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5l3 3"/></svg>
+        <input class="search-input" type="text" placeholder="Search vets, clinics, specializations..." value="Dog specialist near me">
+        <span class="filter-btn">Open now</span>
+        <span class="filter-btn">Under 2 km</span>
+        <span class="filter-btn">Top rated</span>
+      </div>
+
+      <div class="map-area">
+        <div class="map-grid"></div>
+        <div class="user-pin" title="You"></div>
+        <div class="map-pin" style="left: 30%; top: 30%">
+          <div class="pin-circle" style="background: #9FE1CB;">🏥</div>
+          <div class="pin-label">0.8 km</div>
+        </div>
+        <div class="map-pin" style="left: 65%; top: 25%">
+          <div class="pin-circle" style="background: #FAC775;">🏥</div>
+          <div class="pin-label">1.2 km</div>
+        </div>
+        <div class="map-pin" style="left: 70%; top: 60%">
+          <div class="pin-circle" style="background: #9FE1CB;">🏥</div>
+          <div class="pin-label">1.9 km</div>
+        </div>
+        <div class="map-pin" style="left: 25%; top: 65%">
+          <div class="pin-circle" style="background: #F0997B;">🏥</div>
+          <div class="pin-label">2.4 km</div>
+        </div>
+      </div>
+
+      <div class="vet-list-label">4 vets found near you</div>
+
+      <div class="vet-cards">
+        <div class="vet-card featured">
+          <div class="vet-img" style="background: var(--teal-50);">👩‍⚕️</div>
+          <div class="vet-info">
+            <div class="vet-name">Dr. Priya Sharma</div>
+            <div class="vet-spec">Small animals · Dogs · Cats</div>
+            <div class="vet-meta">
+              <span class="stars">★★★★★</span>
+              <span class="dist">0.8 km · City Paws Clinic</span>
+              <span class="avail-badge">Available now</span>
+            </div>
+          </div>
+          <div class="vet-actions">
+            <button class="btn-chat" onclick="sendPrompt('I want to chat with Dr. Priya Sharma about Bruno before booking')">Chat ↗</button>
+            <button class="btn-book">Book slot</button>
+          </div>
+        </div>
+
+        <div class="vet-card">
+          <div class="vet-img" style="background: var(--amber-50);">👨‍⚕️</div>
+          <div class="vet-info">
+            <div class="vet-name">Dr. Arjun Mehta</div>
+            <div class="vet-spec">General practice · All pets</div>
+            <div class="vet-meta">
+              <span class="stars">★★★★☆</span>
+              <span class="dist">1.2 km · Mehta Animal Care</span>
+              <span class="avail-badge">Available now</span>
+            </div>
+          </div>
+          <div class="vet-actions">
+            <button class="btn-chat" onclick="sendPrompt('I want to ask Dr. Arjun Mehta a quick question about Bruno')">Chat ↗</button>
+            <button class="btn-book">Book slot</button>
+          </div>
+        </div>
+
+        <div class="vet-card">
+          <div class="vet-img" style="background: var(--coral-50);">👩‍⚕️</div>
+          <div class="vet-info">
+            <div class="vet-name">Dr. Kavita Nair</div>
+            <div class="vet-spec">Surgery · Orthopedics · Dogs</div>
+            <div class="vet-meta">
+              <span class="stars">★★★★★</span>
+              <span class="dist">1.9 km · Nair Pet Hospital</span>
+              <span class="avail-badge busy">Busy · Next: 3 PM</span>
+            </div>
+          </div>
+          <div class="vet-actions">
+            <button class="btn-chat">Chat ↗</button>
+            <button class="btn-book">Book slot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

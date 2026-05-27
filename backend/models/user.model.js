@@ -65,3 +65,21 @@ const userSchema = new mongoose.Schema({
     ]
 },{timestamps:true})
 
+
+// hashing the password doing this here because using this keyword we can fetch or refer to schema...
+// building custom hook...
+userSchema.pre('save',async function (next) {
+    if(!this.isModified('password')|| !this.password) return next()
+        this.password= await bcrypt.hash(this.password,12)
+    next()
+    
+})
+
+
+//Compare password method...
+userSchema.methods.matchPassword= async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password)
+}
+
+export default mongoose.model('User',userSchema)
+

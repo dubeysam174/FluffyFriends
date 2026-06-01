@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
         enum:['petOwner','vet'],
         default:'petOwner'
     },
-    isVerfied:{
+    isVerified:{
         type: Boolean,
         default:false
     },
@@ -68,11 +68,10 @@ const userSchema = new mongoose.Schema({
 
 // hashing the password doing this here because using this keyword we can fetch or refer to schema...
 // building custom hook...
-userSchema.pre('save',async function (next) {
-    if(!this.isModified('password')|| !this.password) return next()
-        this.password= await bcrypt.hash(this.password,12)
-    next()
-    
+// ✅ correct - regular function keeps 'this' and 'next' working
+userSchema.pre('save', async function() {
+  if (!this.isModified('password') || !this.password) return
+  this.password = await bcrypt.hash(this.password, 12)
 })
 
 

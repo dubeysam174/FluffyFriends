@@ -1,53 +1,46 @@
-import express from 'express'
-import http from 'http'
-
-// third party module ....
-import dotenv from 'dotenv'
+import express      from 'express'
+import http         from 'http'
+import dotenv       from 'dotenv'
 import cookieParser from 'cookie-parser'
-import cors from 'cors'
+import cors         from 'cors'
 
-// internal modules....
-import connectDB from './Config/db.js';
+// ── Internal modules 
+import connectDB            from './Config/db.js'
+import authRoutes           from './routes/auth.route.js'
+import { notFound,
+         errorHandler }     from './middleware/error.Middleware.js'
 
+// ── Environment variables 
+dotenv.config({ path: './.env' })
 
-// accessing and loading variables in the main file so every file can access.
-dotenv.config({
-    path:'./.env'
-})  
+// ── App & Server 
+const app    = express()
+const server = http.createServer(app)
 
-// creating app&server...
-const app    = express();
-const server = http.createServer(app);
-
-
-// middlewares
-app.use(express.json({limit:"16kb"})) // for accessing json data.
-app.use(express.urlencoded({extended:true,limit:"16kb"}))
-app.use(express.static("public"))
+// ── Middleware
+app.use(cors({
+  origin:      process.env.CORS_ORIGIN,
+  credentials: true
+}))
+app.use(express.json({ limit: '16kb' }))
+app.use(express.urlencoded({ extended: true, limit: '16kb' }))
+app.use(express.static('public'))
 app.use(cookieParser())
 
-// connecting the databaese....
+// ── Routes 
+app.use('/api/auth', authRoutes)
+
+// ── Error handling 
+app.use(notFound)
+app.use(errorHandler)
+
+// ── Connect DB then start server 
 connectDB()
-.then(()=>{
-    app.listen(process.env.PORT || 8000,()=>{
-    console.log(`Server running on http://localhost:${process.env.PORT}`)
+  .then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`🚀 Server running on http://localhost:${process.env.PORT || 8000}`)
     })
-})
-.catch((err)=>{
-    console.log("MONGO db connection failed !!!",err)
-})
-
-
-
-
-app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    credentials:true
-}))
-
-
-
-
-
-
-
+  })
+  .catch((err) => {
+    console.log('MongoDB connection failed', err)
+  })

@@ -21,3 +21,6 @@ const sendEmail = async ({to, subject,html})=>{
         html
     })
 }
+
+
+export default sendEmail

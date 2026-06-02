@@ -26,7 +26,7 @@ export const register = asyncHandler(async(req,res)=>{
         const otp= crypto.randomInt(100000,999999).toString()
         const otpExpire = new Date(Date.now()+10*60*1000) // 10 minutes
    
-           // ✅ Send email FIRST, before creating user
+           //  Send email FIRST, before creating user
     try {
         await sendEmail({
             to: email,
@@ -35,7 +35,7 @@ export const register = asyncHandler(async(req,res)=>{
         })
     } catch (error) {
         console.error('Email error:', error);
-        // ✅ Fail early - don't create user if email fails
+        //  Fail early - don't create user if email fails
         return res.status(500).json({
             success: false,
             message: 'Failed to send OTP. Please try again later.'

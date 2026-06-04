@@ -7,6 +7,7 @@ import cors         from 'cors'
 // ── Internal modules 
 import connectDB            from './Config/db.js'
 import authRoutes           from './routes/auth.route.js'
+import vetRoutes from './routes/vet.route.js'
 import { notFound,
          errorHandler }     from './middleware/error.Middleware.js'
 
@@ -29,6 +30,7 @@ app.use(cookieParser())
 
 // ── Routes 
 app.use('/api/auth', authRoutes)
+app.use('/api/vets', vetRoutes)
 
 // ── Error handling 
 app.use(notFound)

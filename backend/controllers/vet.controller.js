@@ -1,134 +1,118 @@
-import Vet from '../models/vet.model.js'
-import User from '../models/user.model.js'
-import {asyncHandler} from '../utils/asyncHandler.js'
+import Vet          from '../models/vet.model.js'
+import User         from '../models/user.model.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
 
+// ── POST /api/vets/create-profile ─────────────────────────────
+export const createVetProfile = asyncHandler(async (req, res) => {
+  console.log('createVetProfile hit')
+  console.log('req.body:', req.body)
 
+  const {
+    clinicName,
+    phone,
+    address,
+    city,
+    bio,
+    specializations,
+    experience,
+    consultationFee,
+    availableDays,
+    availableSlots,
+    coordinates
+  } = req.body
 
-// post /api/vets/create-profile....
+  const existing = await Vet.findOne({ user: req.user._id })
+  if (existing) return res.status(400).json({
+    success:  false,
+    message: 'Vet profile already exists'
+  })
 
-// only vets can create profile...
-export const createVetProfile= asyncHandler(async(req,res)=>{
-    const {
-        clinicName,
-        phone,
-        address,
-        city,
-        bio,
-        specializations,
-        experience,
-        consultationFee,
-        availableDays,
-        availableSlots,
-        coordinates
+  const vet = await Vet.create({
+    user:            req.user._id,
+    clinicName,
+    phone,
+    address,
+    city,
+    bio:             bio            || '',
+    specializations: specializations || [],
+    experience:      experience      || 0,
+    consultationFee: consultationFee || 0,
+    availableDays:   availableDays   || [],
+    availableSlots:  availableSlots  || [],
+    location: {
+      type:        'Point',
+      coordinates: Array.isArray(coordinates) ? coordinates.map(Number) : [0, 0]
+    }
+  })
 
-    }= req.body
-
-
-    // applying check if profile already exists ...
-
-    const existing= await Vet.findOne({user: req.user._id})
-    if(existing) return res.status(400).json({
-        success:false,
-        message:'Vet profile already exists'
-    })
-
-    // create vet profile...
-    const vet= await Vet.create({
-        user: req.user._id,
-        clinicName,
-        phone,
-        address,
-        city,
-        bio,
-        specializations,
-        experience,
-        consultationFee,
-        availableDays,
-        availableSlots,
-        location:{
-            type: 'point',
-            coordinates: coordinates || [0,0]
-        }
-    })
-    res.status(201).json({
-        success:true,
-        message: 'Vet profile created successfully',
-    })
+  res.status(201).json({
+    success: true,
+    message: 'Vet profile created successfully',
+    vet
+  })
 })
 
+// ── GET /api/vets/my-profile ──────────────────────────────────
+export const getMyVetProfile = asyncHandler(async (req, res) => {
+  const vet = await Vet.findOne({ user: req.user._id })
+    .populate('user', 'name email avatar')
 
-// get /api/vets/my-profile...
-// vet can see their own profile...
-export const getMyVetProfile= asyncHandler(async(req,res)=>{
-     const vet = await Vet.findOne({user: req.user._id}).populate('user','name email avatar')
+  if (!vet) return res.status(404).json({
+    success: false,
+    message: 'Vet profile not found'
+  })
 
-     if(!vet) return res.status(404).json({
-        success:false,
-        message: 'vet profile not found'
-     })
-
-     res.json({success:true,vet})
+  res.json({ success: true, vet })
 })
 
+// ── PUT /api/vets/update-profile ──────────────────────────────
+export const updateVetProfile = asyncHandler(async (req, res) => {
+  const vet = await Vet.findOne({ user: req.user._id })
 
-// put /api/vets/update-profile...
-// vet can update their profiles ...
-export const updateVetProfile= asyncHandler(async(req,res)=>{
-    const vet= await Vet.findOne({user:req.user._id})
+  if (!vet) return res.status(404).json({
+    success: false,
+    message: 'Vet profile not found'
+  })
 
-    if(!vet) return res.status(404).json({
-        success:false,
-        message:'vet profile not found'
-    })
-
-
-    const fields =[
-        'clinicName', 'phone', 'address', 'city', 'bio',
+  const fields = [
+    'clinicName', 'phone', 'address', 'city', 'bio',
     'specializations', 'experience', 'consultationFee',
     'availableDays', 'availableSlots', 'isAvailable'
-    ]
+  ]
 
-
-    // only update fields that were sent...
-    fields.forEach(field=>{
-        if(req.body[field] !== undefined){
-            vet[field]= req.body[field]
-        }
-    })
-
-
-    // update coordinates if sent...
-    if(req.body.coordinates){
-        vet.location= {
-            type: 'Point',
-            coordinates: req.body.coordinates
-        }
+  fields.forEach(field => {
+    if (req.body[field] !== undefined) {
+      vet[field] = req.body[field]
     }
+  })
 
-    await vet.save()
+  if (req.body.coordinates) {
+    vet.location = {
+      type:        'Point',
+      coordinates: req.body.coordinates
+    }
+  }
 
-    res.json({
-        success: true,
-        message:'vet profile updated',
-        vet
-    })
+  await vet.save()
+
+  res.json({
+    success: true,
+    message: 'Vet profile updated',
+    vet
+  })
 })
 
+// ── GET /api/vets/nearby ──────────────────────────────────────
+export const getNearbyVets = asyncHandler(async (req, res) => {
+  const { longitude, latitude, maxDistance = 10000, species } = req.query
 
-// get /api/ vets/ nearby...
-//pet owner searches nearby vets..
-export const getNearbyVets = asyncHandler(async(req,res)=>{
-    const {longitude,latitude,maxDistance=10000,species}=req.query
-    // maxdistance in meters = default 10 km...
+  if (!longitude || !latitude) return res.status(400).json({
+    success: false,
+    message: 'Longitude and latitude are required'
+  })
 
-    if(!longitude || !latitude) return res.status(400).json({
-        success:false,
-        message:'longitude and latitude are required'
-    })
-
-    // build query...
-    const query= {
-         verificationStatus: 'approved',
+  const query = {
+    verificationStatus: 'approved',
     isAvailable:        true,
     location: {
       $near: {
@@ -139,60 +123,49 @@ export const getNearbyVets = asyncHandler(async(req,res)=>{
         $maxDistance: parseFloat(maxDistance)
       }
     }
-    }
+  }
 
-    //filter by species if provided...
-    if(species){
-        query.specializations=species
-    }
+  if (species) query.specializations = species
 
-
-    const vets = await Vet.find(query)
-    .populate('user','name email avatar')
+  const vets = await Vet.find(query)
+    .populate('user', 'name email avatar')
     .select('-availableSlots')
 
-
-    res.json({
-        success:true,
-        count:vets.length,
-        vets
-    })
+  res.json({
+    success: true,
+    count:   vets.length,
+    vets
+  })
 })
 
+// ── GET /api/vets/:id ─────────────────────────────────────────
+export const getVetById = asyncHandler(async (req, res) => {
+  const vet = await Vet.findById(req.params.id)
+    .populate('user', 'name email avatar')
 
-// get /api/ vets/:id..
-// get single vet details...
-export  const getVetById = asyncHandler(async(req,res)=>{
-    const vet = await Vet.findById(req.params.id)
-    .populate('user','name email avatar')
+  if (!vet) return res.status(404).json({
+    success: false,
+    message: 'Vet not found'
+  })
 
-    if(!vet) return res.status(404).json({
-        success:false,
-        message: 'vet not found'
-    })
-
-    res.json({success:true,vet})
-
+  res.json({ success: true, vet })
 })
 
+// ── GET /api/vets ─────────────────────────────────────────────
+export const getAllVets = asyncHandler(async (req, res) => {
+  const { city, species } = req.query
+  const query = { verificationStatus: 'approved' }
 
-// get api/vets...
-//get all approved vets (for brosing)...
+  if (city)    query.city            = { $regex: city, $options: 'i' }
+  if (species) query.specializations = species
 
-export const getAllVets= asyncHandler(async(req,res)=>{
-    const {city,species} = req.query
-    const query= {verificationStatus:'approved'}
-
-    if(city) query.city= {$regex:city,$options:'i'}
-    if(species) query.specializations= species
-
-    const vets = await Vet.find(query)
-    .populate('user','name email avatar')
+  const vets = await Vet.find(query)
+    .populate('user', 'name email avatar')
     .select('-availableSlots')
 
-    res.json({
-        success:true,
-        count: vets.length,
-        vets
-    })
+  res.json({
+    success: true,
+    count:   vets.length,
+    vets
+  })
 })

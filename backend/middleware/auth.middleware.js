@@ -7,12 +7,15 @@ import { asyncHandler } from '../utils/asyncHandler.js'
 // protected routes.... for accessing you need to access or login...
 
 export const protect = asyncHandler(async(req,res,next)=>{
+    console.log('headers:', req.headers)           // see all headers
+  console.log('auth header:', req.headers.authorization)
     let token
 
     // check if token in auth header...
     if(req.headers.authorization?.startsWith('Bearer')){
         token = req.headers.authorization.split(' ')[1]
     }
+    console.log('token extracted:', token)  // see if token is extracted
 
     // when no token found...
     if(!token){

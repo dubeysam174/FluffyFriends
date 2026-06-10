@@ -10,18 +10,21 @@ import {createVetProfile,
 
 import {protect,vetOnly,petOwnerOnly} from '../middleware/auth.middleware.js'
 
+const router = express.Router()
 
-// making instance of router...
-const router=express.Router()
+// public routes...
+router.get('/', protect, getAllVets)
+router.get('/nearby', protect, getNearbyVets)
+router.get('/:id', protect, getVetById)
 
-//public routes...
-router.get('/',protect,getAllVets)
-router.get('/nearby',protect,getNearbyVets)
-router.get('/:id',protect,getVetById)
+// vet only routes...
+router.post('/create-profile', (req, res, next) => {
+  console.log('create-profile route hit')
+  console.log('auth header:', req.headers.authorization)
+  next()
+}, protect, vetOnly, createVetProfile)
 
-//vet only routes...
-router.post('/create-profile', protect,vetOnly,createVetProfile)
-router.get('/my-profile', protect,vetOnly,getMyVetProfile)
-router.put('/update-profile', protect,vetOnly,updateVetProfile)
+router.get('/my-profile', protect, vetOnly, getMyVetProfile)
+router.put('/update-profile', protect, vetOnly, updateVetProfile)
 
 export default router

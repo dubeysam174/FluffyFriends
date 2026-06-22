@@ -12,6 +12,7 @@ router.post('/verify-otp',verifyOTP)
 router.post('/login',login)
 
 
+
 // protected routes means you can only access them when you are logged in or authenticated....
 
 router.get('/me',protect,getMe)

@@ -118,3 +118,6 @@ const user = await User.findOne({email}).select('+password')
     export const logout= asyncHandler( async (req,res)=>{
         res.json({message:'logged out successfully'})
     })
+
+// this is experimental doing because i am understanding backend...
+

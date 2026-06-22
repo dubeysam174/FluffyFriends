@@ -8,6 +8,7 @@ import cors         from 'cors'
 import connectDB            from './Config/db.js'
 import authRoutes           from './routes/auth.route.js'
 import vetRoutes from './routes/vet.route.js'
+import petRoutes from './routes/pet.route.js'
 import { notFound,
          errorHandler }     from './middleware/error.Middleware.js'
 
@@ -28,14 +29,10 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }))
 app.use(express.static('public'))
 app.use(cookieParser())
 
-app.use((req, res, next) => {
-  console.log(`➡️ ${req.method} ${req.url}`)
-  next()
-})
-
 // ── Routes 
 app.use('/api/auth', authRoutes)
 app.use('/api/vets', vetRoutes)
+app.use('/api/pets',petRoutes)
 
 // ── Error handling 
 app.use(notFound)

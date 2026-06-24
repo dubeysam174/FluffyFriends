@@ -9,6 +9,7 @@ import connectDB            from './Config/db.js'
 import authRoutes           from './routes/auth.route.js'
 import vetRoutes from './routes/vet.route.js'
 import petRoutes from './routes/pet.route.js'
+import appointmentRoutes from './routes/appointment.route.js'
 import { notFound,
          errorHandler }     from './middleware/error.Middleware.js'
 
@@ -33,6 +34,7 @@ app.use(cookieParser())
 app.use('/api/auth', authRoutes)
 app.use('/api/vets', vetRoutes)
 app.use('/api/pets',petRoutes)
+app.use('/api/appointments',appointmentRoutes)
 
 // ── Error handling 
 app.use(notFound)

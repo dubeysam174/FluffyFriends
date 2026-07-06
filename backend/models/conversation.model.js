@@ -36,4 +36,4 @@ const conversationSchema= new mongoose.Schema({
 
 
 
-export default mongoose.model('Conversationn',conversationSchema)
+export default mongoose.model('Conversation',conversationSchema)

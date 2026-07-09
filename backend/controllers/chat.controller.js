@@ -57,3 +57,50 @@ export const getMyConversations = asyncHandler(async(req,res)=>{
 })
 
 
+// GET  /api/chat/:conversationId/messages
+export const getMessages = asyncHandler(async(req,res)=>{
+    const conversation = await Conversation.findById(req.params.conversationId)
+
+    if(!conversation) return res.status(404).json({
+        success:false,
+        message: 'conversation not found'
+    })
+
+    // check user is participant or not..
+    const isParticipant = conversation.participants
+        .map(p=>p.toString())
+        .includes(req.user._id.toString())
+
+    if(!isParticipant) return res.status(403).json({
+        success:false,
+        message: 'not authorized to view this conversation'
+    })
+
+    const messages = await Message.find({
+        conversation: req.params.conversationId
+    })
+    .populate('sender','name avatar')
+    .sort({createdAt:1})
+
+
+    // mark messages as read..
+    await Message.updateMany(
+        {
+            conversation: req.params.conversationId,
+            sender:{$ne: req.user._id},
+            isRead: false
+        },
+        {
+            isRead:true,
+            readAt: new Date()
+        }
+    )
+
+    res.json({
+        success: true,
+        count: messages.length,
+        messages
+    })
+})
+
+

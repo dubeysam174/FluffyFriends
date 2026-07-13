@@ -105,6 +105,51 @@ export const getMessages = asyncHandler(async(req,res)=>{
 
 
 // POST /api/chat/:conversationId/message
+export const sendMessage = asyncHandler(async(req,res)=>{
+    const {text,type,fileUrl}=req.body
+
+
+    if(!text && !fileUrl) return res.status(400).json({
+        success:false,
+        message: 'message text or file is required'
+    })
+
+    const conversation=await Conversation.findById(req.params.conversationId)
+
+    if(!conversation) return res.status(404).json({
+        success:false,
+        message: 'Conversation not found'
+    })
+
+    const isParticipant= conversation.participants
+    .map(p=> p.toString())
+    .includes(req.user._id.toString())
+
+    if(!isParticipant) return res.status(403).json({
+        success:false,
+        message: 'not authorized' 
+    })
+
+    const message= await Message.create({
+        conversation: req.params.conversationId,
+        sender: req.user._id,
+        text: text || '',
+        type: type || 'text',
+        fileUrl: fileUrl || ''
+    })
+
+    //update conversation preview...
+    conversation.lastMessage = text || 'Sent a file'
+    conversation.lastMessageTime= new Date()
+    await conversation.save()
+
+    res.status(201).json({
+        success: true,
+        message
+    })
+
+
+})
 
 
 

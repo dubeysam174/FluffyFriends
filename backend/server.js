@@ -10,6 +10,7 @@ import authRoutes           from './routes/auth.route.js'
 import vetRoutes from './routes/vet.route.js'
 import petRoutes from './routes/pet.route.js'
 import appointmentRoutes from './routes/appointment.route.js'
+import chatRoutes from './routes/chat.route.js'
 import { notFound,
          errorHandler }     from './middleware/error.Middleware.js'
 
@@ -35,6 +36,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/vets', vetRoutes)
 app.use('/api/pets',petRoutes)
 app.use('/api/appointments',appointmentRoutes)
+app.use('/api/chat', chatRoutes)
 
 // ── Error handling 
 app.use(notFound)

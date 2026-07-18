@@ -18,7 +18,7 @@ const vetSlice = createSlice({
             state.vets = action.payload
         },
         setNearbyVets: (state,action)=>{
-            state.setNearbyVets=action.payload
+            state.NearbyVets=action.payload
         },
         setSelectedVet: (state,action)=>{
             state.selectedVet=action.payload

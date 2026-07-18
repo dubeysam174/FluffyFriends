@@ -1,0 +1,41 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+
+const initialState={
+    vets: [],
+    nearbyVets: [],
+    selectedVet:null,
+    loading: false,
+    error: null
+}
+
+
+const vetSlice = createSlice({
+    name:'vet',
+    initialState,
+    reducers: {
+        setVets: (state,action)=>{
+            state.vets = action.payload
+        },
+        setNearbyVets: (state,action)=>{
+            state.setNearbyVets=action.payload
+        },
+        setSelectedVet: (state,action)=>{
+            state.selectedVet=action.payload
+
+        },
+        setLoading: (state,action)=>{
+            state.loading=action.payload
+        },
+        setError: (state,action)=>{
+            state.error=action.payload
+        }
+    }
+})
+
+export const {setVets,setNearbyVets,setSelectedVet,setLoading,setError}=vetSlice.actions
+export default vetSlice.reducer
+
+export const selectVets       = (state) => state.vet.vets
+export const selectNearbyVets = (state) => state.vet.nearbyVets
+export const selectSelectedVet = (state) => state.vet.selectedVet

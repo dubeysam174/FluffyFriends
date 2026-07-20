@@ -1,11 +1,23 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
+import store from "./store/store.js";
+import { SocketProvider } from "./store/socketContext.jsx";
 
-import App from './App.jsx'
+import "./index.css";
 
-createRoot(document.getElementById('root')).render(
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <Provider store={store}>
+        <SocketProvider>
+          <App />
+        </SocketProvider>
+      </Provider>
+    </BrowserRouter>
   </StrictMode>,
-)
+);

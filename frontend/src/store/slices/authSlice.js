@@ -1,7 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit'
 
 // creating initialstate...
-const initialstate={
+const initialState={
     user:JSON.parse(localStorage.getItem('user')) || null,
     token: localStorage.getItem('token') || null,
     loading: false,

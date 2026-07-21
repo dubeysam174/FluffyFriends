@@ -5,9 +5,9 @@ const initialState = {
   selectedPets: null,
   loading: false,
   error: null,
-};
+}
 
-const petslice = createSlice({
+const petSlice = createSlice({
   name: "pet",
   initialState,
   reducers: {
@@ -29,4 +29,11 @@ const petslice = createSlice({
     },
   },
 });
+
+
+export const { setPets, addPet, setSelectedPet, setLoading, setError } = petSlice.actions
+export default petSlice.reducer
+
+export const selectPets       = (state) => state.pet.pets
+export const selectSelectedPet = (state) => state.pet.selectedPet
 

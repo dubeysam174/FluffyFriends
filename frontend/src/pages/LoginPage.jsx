@@ -48,30 +48,16 @@ const LoginPage = () => {
     }
   };
   return (
-    <div className="min-h-screen flex">
+    <div className="h-screen flex overflow-hidden ">
       {/* left side image.... */}
-      <div className=" hidden lg:flex w-1/2 bg-gradient-to-br from blue-100 to-pink-100 flex-col justify-center p-12">
-        {/* text */}
-        <h2 className="text-4xl font-bold text-gray-800 mb-4">
-          Welcome back, <span className="text-red-500"> Pet Parent </span>
-        </h2>
-        <p className="text-gray-600 text-lg">
-          Track appointments, monitor wellness, and never miss a moment of your
-          companion's care.
-        </p>
-        <div className="max-w-md">
-          {/* for image... */}
-          <div className="mb-8">
-            <img
-              src="/login.jpg"
-              alt="happy pets"
-              className="w-full rounded-3xl shadow-2xl"
-            />
-          </div>
-        </div>
-
-        {/* right side - form */}
+        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-red-100 to-pink-100 relative overflow-hidden">
+        <img
+          src="/login.jpg"
+          alt="dog"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
       </div>
+        {/* right side - form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           {/* logo mobile only  */}
@@ -81,12 +67,13 @@ const LoginPage = () => {
           </div>
 
           {/* heading */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Sign in to your account
-            </h1>
-            <p className="text-gray-600">
-              Enter your details below to continue
+          
+          <div className="mb-2 overflow-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Welcome Back! 
+            </h2>
+            <p className="text-gray-600 text-sm italic">
+             Please Login to move forward
             </p>
           </div>
           {/* form */}
@@ -104,7 +91,7 @@ const LoginPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-12 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-red-500 transition"
+                  className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
                   required
                 />
               </div>
@@ -123,8 +110,8 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="....."
+                  className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
                   required
-                  className="w-full pl-12 pr-12 py-2.5 border-2 border-gray-200 rounded-xl focus:ouline-none focus:border-red-500 transition"
                 />
                 <button
                   type="button"

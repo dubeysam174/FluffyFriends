@@ -66,7 +66,8 @@ const Register = () => {
           {/* heading */}
           <div className="mb-2 overflow-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Join <span className="text-red-600 italic">"FluffyFriends"</span> today.
+              Join <span className="text-red-600 italic">"FluffyFriends"</span>{" "}
+              today.
             </h2>
             <p className="text-gray-600 text-sm italic">
               Start your journey toward better pet care. Connect with trusted
@@ -81,28 +82,34 @@ const Register = () => {
                 <span className="text-xl">
                   {formData.role === "petOwner" ? "🐶" : "🏥"}
                 </span>
-                <div>
-                <p className="text-xs text-gray-800 font-medium">I am a</p>
-                <span className="font-semibold text-gray-800">
-                  {formData.role === "petOwner" ? "Pet Owner" : "Veterinarian"}
-                </span>
-              </div>
               </div>
               {/* toggle switch.. */}
-              <button
-                type="button"
-                onClick={toggleRole}
-                className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                  formData.role === "vet" ? "bg-red-600" : "bg-gray-300"
-                } `}
-              >
-                {" "}
-                <span
-                  className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                    formData.role === "vet" ? "translate-x-7" : "translate-x-1"
-                    }`}
-                    />
-              </button>
+               <div className="flex items-center justify-between">
+  {/* Text */}
+  <div className="flex flex-col mr-1">
+    <p className="text-xs text-gray-500">I am a</p>
+    <span className="text-lg font-semibold text-gray-800">
+      {formData.role === "petOwner" ? "Pet Owner" : "Veterinarian"}
+    </span>
+  </div>
+
+  {/* Toggle */}
+  <button
+    type="button"
+    onClick={toggleRole}
+    className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 ${
+      formData.role === "vet" ? "bg-red-600" : "bg-gray-600"
+    }`}
+  >
+    <span
+      className={`inline-block h-6 w-6 rounded-full bg-white transform transition-transform duration-300 ${
+        formData.role === "vet"
+          ? "translate-x-7"
+          : "translate-x-1"
+      }`}
+    />
+  </button>
+</div>
             </div>
             {/* name field... */}
             <div>
@@ -118,7 +125,8 @@ const Register = () => {
                   onChange={handleChange}
                   placeholder="John Doe"
                   required
-className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"                />
+                  className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
+                />
               </div>
             </div>
             {/* Email Field */}
@@ -135,10 +143,11 @@ className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent fo
                   onChange={handleChange}
                   placeholder="you@example.com"
                   required
-className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"                />
+                  className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
+                />
               </div>
             </div>
-                    {/* Password Field */}
+            {/* Password Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -152,7 +161,8 @@ className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent fo
                   onChange={handleChange}
                   placeholder="••••••••"
                   required
-className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"                />
+                  className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
+                />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}

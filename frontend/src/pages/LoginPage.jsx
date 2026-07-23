@@ -77,7 +77,7 @@ const LoginPage = () => {
           {/* logo mobile only  */}
           <div className="lg:hidden text-center mb-8">
             <div className="text-5xl mb-2">🐾</div>
-            <h1 className="text-3xl font-bold text-green-600">FluffyFriends</h1>
+            <h1 className="text-3xl font-bold text-red-600">FluffyFriends</h1>
           </div>
 
           {/* heading */}

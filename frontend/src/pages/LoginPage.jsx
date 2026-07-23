@@ -109,7 +109,7 @@ const LoginPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="....."
+                  placeholder="••••••••"
                   className="w-full pl-12 pr-4 py-2.5 border-b-2 border-gray-300 bg-transparent focus:outline-none focus:border-red-500 transition"
                   required
                 />
@@ -123,16 +123,7 @@ const LoginPage = () => {
                 </button>
               </div>
             </div>
-            {/* remember & forgot */}
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input type="checkbox" className="w-4 h-4 rounded" />
-                <span className="ml-2 text-sm text-gray-700">Remember me</span>
-              </label>
-              <a href="#" className="text-sm text-black hover:text-red-600">
-                Forgot password?
-              </a>
-            </div>
+           
             {/* sign in button */}
             <button
               type="submit"

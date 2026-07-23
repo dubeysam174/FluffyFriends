@@ -94,21 +94,21 @@ const Register = () => {
   </div>
 
   {/* Toggle */}
-  <button
-    type="button"
-    onClick={toggleRole}
-    className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-300 ${
-      formData.role === "vet" ? "bg-red-600" : "bg-gray-600"
+ <button
+  type="button"
+  onClick={toggleRole}
+  className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+    formData.role === "vet" ? "bg-red-700" : "bg-gray-400"
+  }`}
+>
+  <span
+    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300 ${
+      formData.role === "vet"
+        ? "translate-x-5"
+        : "translate-x-0"
     }`}
-  >
-    <span
-      className={`inline-block h-6 w-6 rounded-full bg-white transform transition-transform duration-300 ${
-        formData.role === "vet"
-          ? "translate-x-7"
-          : "translate-x-1"
-      }`}
-    />
-  </button>
+  />
+</button>
 </div>
             </div>
             {/* name field... */}

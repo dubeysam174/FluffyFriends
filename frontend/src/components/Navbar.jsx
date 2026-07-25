@@ -60,7 +60,7 @@ const Navbar = () => {
     >
       <Link to="/" className="flex items-center gap-2">
         <div className="w-20 ">
-          <Logo size={300} isDark={false} />
+          <Logo size={250} isDark={false} />
         </div>
       </Link>
 

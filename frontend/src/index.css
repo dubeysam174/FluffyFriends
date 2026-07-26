@@ -1,5 +1,37 @@
-/* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* stylelint-enable at-rule-no-unknown */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translateY(-20px) rotate(10deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-40px) rotate(0deg);
+    opacity: 0.15;
+  }
+  75% {
+    transform: translateY(-20px) rotate(-10deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}

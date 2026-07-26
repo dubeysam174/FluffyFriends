@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import FloatingPaws from "./FloatingPaws";
-import { FaPaw,FaStar,FaUserMd } from "react-icons/fa";
+import { FaPaw, FaStar, FaUserMd } from "react-icons/fa";
 import GlassCard from "./GlassCard";
 
 const HeroSection = () => {
@@ -13,7 +13,6 @@ const HeroSection = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-screen py-12">
-          
           {/* LEFT SIDE - TEXT CONTENT */}
           <div className="space-y-8">
             {/* MAIN HEADLINE */}
@@ -32,8 +31,8 @@ const HeroSection = () => {
 
             {/* DESCRIPTION */}
             <p className="text-gray-600 text-lg max-w-md leading-relaxed">
-              We offer personalized care plans and expert services to meet the 
-              unique needs of every pet, ensuring their health, happiness, and 
+              We offer personalized care plans and expert services to meet the
+              unique needs of every pet, ensuring their health, happiness, and
               well-being.
             </p>
 
@@ -59,41 +58,57 @@ const HeroSection = () => {
             <div className="relative w-full max-w-md">
               <div className="relative">
                 {/* Circle Background */}
-                <div className="w-80 h-80 mx-auto bg-gradient-to-br from-red-400 to-orange-400 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
-                  <img
-                    src="/login.jpg"
-                    alt="Happy pet owner with pets"
-                    className="w-full h-full object-cover"
-                  />
+
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {/* Outer Circle */}
+                  <div className="w-[420px] h-[420px] rounded-full bg-red-200"></div>
+
+                  {/* Middle Circle */}
+                  <div className="absolute w-[340px] h-[340px] rounded-full bg-red-300"></div>
+
+                  {/* Inner Circle */}
+                  <div className="absolute w-[260px] h-[260px] rounded-full bg-red-500">
+              <img
+  src="/hero4.png"
+  className="
+    absolute
+    bottom-4
+    left-1/2
+    -translate-x-1/2
+    w-[380px]
+    object-contain
+    z-20
+    drop-shadow-[0_25px_35px_rgba(0,0,0,0.25)]
+  "
+/>
+                  </div>
                 </div>
+              </div>
 
-               {/* TOP LEFT */}
-<GlassCard
-  icon={<FaStar size={20} />}
-  title="4.9 Rating"
-  subtitle="2K+ Reviews"
-  className="hidden md:flex top-8 -left-8 lg:-left-16"
-/>
+              {/* TOP LEFT */}
+              <GlassCard
+                icon={<FaStar size={20} />}
+                title="4.9 Rating"
+                subtitle="2K+ Reviews"
+                className="hidden md:flex top-8 -left-8 lg:-left-16"
+              />
 
-{/* TOP RIGHT */}
-<GlassCard
-  icon={<FaUserMd size={20} />}
-  title="150+ Vets"
-  subtitle="Certified Experts"
-  className="hidden md:flex top-24 -right-8 lg:-right-16"
-/>
+              {/* TOP RIGHT */}
+              <GlassCard
+                icon={<FaUserMd size={20} />}
+                title="150+ Vets"
+                subtitle="Certified Experts"
+                className="hidden md:flex top-24 -right-8 lg:-right-12"
+              />
 
-{/* BOTTOM LEFT */}
-<div className="animate-bounce">
-
-<GlassCard
-  icon={<FaPaw size={20} />}
-  title="10K+ Pets"
-  subtitle="Happy Customers"
-  className="hidden md:flex bottom-10 -left-4 lg:-left-12"
-/>
-  </div>
-                
+              {/* BOTTOM LEFT */}
+              <div className="animate-bounce">
+                <GlassCard
+                  icon={<FaPaw size={20} />}
+                  title="10K+ Pets"
+                  subtitle="Happy Customers"
+                  className="hidden md:flex bottom-10 -left-4 lg:-left-20"
+                />
               </div>
             </div>
           </div>

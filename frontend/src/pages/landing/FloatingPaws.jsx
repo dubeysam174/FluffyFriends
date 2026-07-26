@@ -36,6 +36,13 @@ const paws = [
     delay: "2s",
     duration: "2.8s",
   },
+  {
+    bottom: "56%",
+    left: "45%",
+    size: "text-5xl",
+    delay: "2s",
+    duration: "2.8s",
+  },
 ];
 
 export default function FloatingPaws() {

@@ -24,6 +24,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
+    console.log('useEffect ran')
     const handleScroll = () => {
        console.log(window.scrollY);
       setScrolled(window.scrollY > 40);

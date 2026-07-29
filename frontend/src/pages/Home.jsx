@@ -1,23 +1,43 @@
 import React from 'react'
-import HeroSection from './landing/HeroSection'
-import FeatureSection from './landing/FeaturesSection'
-import ServicesSection from './landing/ServicesSection'
-import PetCareTips from './landing/PetCareTips'
-import Footer from './landing/Footer'
-import HowItWorks from './landing/HowItWorks'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../store/slices/authSlice'
+import HeroSection from '../components/landing/HeroSection'
+import FeaturesSection from '../components/landing/FeaturesSection'
+import PetCareTips from '../components/landing/PetCareTips'
+import Footer from '../components/landing/Footer'
+import HowItWorks from '../components/landing/HowItWorks'
+import PetOwnerDashboard from '../components/Home/PetDashboard'
+import VetDashboard from '../components/Home/VetDashboard'
 
 const Home = () => {
-  return (
-    <div>
-      <HeroSection/>
-      <FeatureSection/>
-      {/* <ServicesSection/> */}
-      <PetCareTips/>
-      <HowItWorks/>
-      <Footer/>
-     
-    </div>
-  )
-}
+  const user = useSelector(selectUser);
 
-export default Home
+  return (
+    <div className="min-h-screen bg-white">
+      {!user ? (
+        // NOT LOGGED IN - Show Landing Page
+        <>
+          <HeroSection />
+          <FeaturesSection />
+          <HowItWorks />
+          <PetCareTips />
+          <Footer />
+        </>
+      ) : user.role === 'petOwner' ? (
+        // LOGGED IN AS PET OWNER
+        <>
+          <PetOwnerDashboard />
+          
+        </>
+      ) : (
+        // LOGGED IN AS VET
+        <>
+          <VetDashboard />
+          
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Home;

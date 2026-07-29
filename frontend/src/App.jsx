@@ -29,7 +29,7 @@ const VetRoute = ({ children }) => {
 function App() {
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/" element={<Home />} />

@@ -12,7 +12,7 @@ import Chat from "./pages/Chat";
 import FindVet from "./pages/FindVet";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import VetDashboard from "./pages/VetDashboard";
+
 
 const ProtectedRoute = ({ children }) => {
   const user = useSelector(selectUser);
@@ -69,14 +69,6 @@ function App() {
           }
         />
 
-        <Route
-          path="/vet-dashboard"
-          element={
-            <VetRoute>
-              <VetDashboard />
-            </VetRoute>
-          }
-        />
       </Routes>
     </>
   );

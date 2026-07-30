@@ -37,9 +37,9 @@ const LoginPage = () => {
       toast.success(`Welcome back ${data.user.name}`);
 
       if (data.user.role === "vet") {
-        navigate("/vet-dashboard");
+        navigate("/");
       } else {
-        navigate("/find-vet");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");

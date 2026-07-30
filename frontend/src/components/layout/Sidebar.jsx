@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectUser } from "../../store/slices/authSlice";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
-import { Menu, X, LogOut, Home, Heart, Calendar, MessageSquare, User, MapPin, Settings, HelpCircle } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Home,
+  Heart,
+  Calendar,
+  MessageSquare,
+  User,
+  MapPin,
+  Settings,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
 import Logo from "../Logo";
 
-const GlassSidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const GlassSidebar = ({isOpen,setIsOpen}) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
@@ -24,22 +37,21 @@ const GlassSidebar = () => {
   };
 
   // Different menu items based on role
-  const menuItems = user?.role === "petOwner" 
-    ? [
-        
-        { icon: Heart, label: "My Pets", path: "/pets" },
-        { icon: MapPin, label: "Find Vet", path: "/find-vet" },
-        { icon: Calendar, label: "Appointments", path: "/appointments" },
-        { icon: MessageSquare, label: "Chat", path: "/chat" },
-        { icon: User, label: "Profile", path: "/profile" },
-      ]
-    : [
-       
-        { icon: Calendar, label: "Appointments", path: "/appointments" },
-        { icon: Heart, label: "My Patients", path: "/my-patients" },
-        { icon: MessageSquare, label: "Messages", path: "/chat" },
-        { icon: User, label: "Profile", path: "/profile" },
-      ];
+  const menuItems =
+    user?.role === "petOwner"
+      ? [
+          { icon: Heart, label: "My Pets", path: "/pets" },
+          { icon: MapPin, label: "Find Vet", path: "/find-vet" },
+          { icon: Calendar, label: "Appointments", path: "/appointments" },
+          { icon: MessageSquare, label: "Chat", path: "/chat" },
+          { icon: User, label: "Profile", path: "/profile" },
+        ]
+      : [
+          { icon: Calendar, label: "Appointments", path: "/appointments" },
+          { icon: Heart, label: "My Patients", path: "/my-patients" },
+          { icon: MessageSquare, label: "Messages", path: "/chat" },
+          { icon: User, label: "Profile", path: "/profile" },
+        ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -55,23 +67,43 @@ const GlassSidebar = () => {
 
       {/* GLASS SIDEBAR */}
       <div
-  className={`fixed left-0 top-0 h-screen transition-all duration-300 z-40
-  backdrop-blur-xl bg-white/10 border-r border-white/20
-  shadow-2xl ${
-    isOpen ? "w-64" : "w-20"
-  } lg:translate-x-0`}
+        className={` fixed left-0 top-0 h-screen  transition-all duration-300 z-40
+                                                                                      backdrop-blur-xl bg-white/10 border-r border-white/20
+                                                                                      shadow-2xl ${
+                                                                                        isOpen
+                                                                                          ? "w-64"
+                                                                                          : "w-20"
+                                                                                      } lg:translate-x-0`}
+      >
+        <div className="h-full flex flex-col">
+          <button
+  onClick={() => setIsOpen(!isOpen)}
+  className="hidden lg:flex absolute -right-4 top-8
+             w-8 h-8 rounded-full bg-white
+             shadow-xl border border-gray-200
+             items-center justify-center
+             hover:scale-110 transition-all"
 >
-  <div className="h-full flex flex-col">
-          
+  {isOpen ? (
+    <ChevronLeft size={18} />
+  ) : (
+    <ChevronRight size={18} />
+  )}
+</button>
           {/* LOGO */}
           <div className="p-6 flex items-center justify-center lg:justify-start gap-3 border-b border-white/10">
-     
-           <div className="w- h-10 bg-white/20 rounded-xl backdrop-blur-xl border border-white/30 shadow-lg flex items-center justify-center">
-  <Link to={'/'}>
-  <Logo size={200} />
+            <div
+  className={`border-b border-white/10 transition-all duration-300
+  ${isOpen ? "px-6 py-5" : "py-5 flex justify-center"}`}
+>
+  <Link to="/" className="flex items-center">
+    {isOpen ? (
+      <Logo size={170} />
+    ) : (
+      <Logo size={45} /> // Only the icon/paw logo
+    )}
   </Link>
 </div>
-            
           </div>
 
           {/* NAVIGATION */}
@@ -91,7 +123,9 @@ const GlassSidebar = () => {
                   title={!isOpen ? item.label : ""}
                 >
                   <Icon size={20} className="flex-shrink-0" />
-                  {isOpen && <span className="hidden lg:inline">{item.label}</span>}
+                  {isOpen && (
+                    <span className="hidden lg:inline">{item.label}</span>
+                  )}
                 </Link>
               );
             })}
@@ -136,7 +170,9 @@ const GlassSidebar = () => {
               </div>
               {isOpen && (
                 <div className="hidden lg:block text-sm min-w-0">
-                  <p className="font-semibold text-black truncate">{user?.name}</p>
+                  <p className="font-semibold text-black truncate">
+                    {user?.name}
+                  </p>
                   <p className="text-black text-xs capitalize truncate">
                     {user?.role === "petOwner" ? "🐕 Pet Owner" : "🏥 Vet"}
                   </p>

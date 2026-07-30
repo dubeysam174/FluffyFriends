@@ -1,7 +1,17 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
-import { MapPin, Calendar, MessageSquare, Plus } from "lucide-react";
+import { MapPin,
+  CalendarDays,
+  Clock3,
+  MessageSquare,
+  Plus,
+  PawPrint,
+  ShieldCheck,
+  MessageCirclePlus,
+  ChevronRight,
+  Stethoscope,
+  Syringe,CalendarDaysIcon,MessageCirclePlusIcon  } from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout";
 
 const PetOwnerDashboard = () => {
@@ -12,7 +22,7 @@ const PetOwnerDashboard = () => {
       <div className="space-y-8">
         
         {/* WELCOME HEADER */}
-        <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-8 border border-red-200">
+        
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome back, <span className="text-red-600">{user?.name}!</span> 🐾
           </h1>
@@ -24,120 +34,179 @@ const PetOwnerDashboard = () => {
               day: "numeric",
             })}
           </p>
-        </div>
+       
 
         {/* QUICK STATS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+  <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Your Pets</p>
                 <p className="text-3xl font-bold text-gray-900">3</p>
               </div>
-              <div className="text-4xl">🐕</div>
+              <div className="text-4xl"><PawPrint className="w-7 h-7 text-orange-600"/></div>
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+  <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Upcoming Appointments</p>
                 <p className="text-3xl font-bold text-gray-900">2</p>
               </div>
-              <div className="text-4xl">📅</div>
+              <div className="text-4xl"><CalendarDaysIcon className="w-7 h-7 text-red-600"/></div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+  <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Trusted Vets</p>
                 <p className="text-3xl font-bold text-gray-900">5</p>
               </div>
-              <div className="text-4xl">🏥</div>
+              <div className="text-4xl"><ShieldCheck className="w-7 h-7 text-red-600"/></div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+  <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">New Messages</p>
                 <p className="text-3xl font-bold text-gray-900">1</p>
               </div>
-              <div className="text-4xl">💬</div>
+              <div className="text-4xl"><MessageCirclePlusIcon className="w-7 h-7 text-orange-600"/></div>
             </div>
           </div>
         </div>
 
-        {/* MAIN ACTIONS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* FIND VET */}
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-8 text-white shadow-lg hover:shadow-xl transition">
-            <MapPin size={40} className="mb-4" />
-            <h3 className="text-2xl font-bold mb-2">Find a Vet</h3>
-            <p className="text-blue-100 mb-4">
-              Search for trusted veterinarians near you
-            </p>
-            <button className="bg-white text-blue-600 font-semibold px-6 py-2 rounded-lg hover:bg-blue-50 transition">
-              Search Vets
-            </button>
-          </div>
-
-          {/* BOOK APPOINTMENT */}
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-8 text-white shadow-lg hover:shadow-xl transition">
-            <Calendar size={40} className="mb-4" />
-            <h3 className="text-2xl font-bold mb-2">Book Appointment</h3>
-            <p className="text-green-100 mb-4">
-              Schedule a checkup with your favorite vet
-            </p>
-            <button className="bg-white text-green-600 font-semibold px-6 py-2 rounded-lg hover:bg-green-50 transition">
-              Book Now
-            </button>
-          </div>
-
-          {/* CHAT WITH VET */}
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-8 text-white shadow-lg hover:shadow-xl transition">
-            <MessageSquare size={40} className="mb-4" />
-            <h3 className="text-2xl font-bold mb-2">Chat with Vet</h3>
-            <p className="text-purple-100 mb-4">
-              Get quick advice from your veterinarian
-            </p>
-            <button className="bg-white text-purple-600 font-semibold px-6 py-2 rounded-lg hover:bg-purple-50 transition">
-              Chat Now
-            </button>
-          </div>
-        </div>
+       
+       
 
         {/* UPCOMING APPOINTMENTS */}
-        <div className="bg-white rounded-2xl shadow p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Appointments</h2>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-4 border-l-4 border-red-600 bg-gray-50 rounded-lg">
-              <div className="text-3xl">🏥</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">Annual Checkup with Dr. Sharma</h4>
-                <p className="text-gray-600 text-sm">Max (Golden Retriever)</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">May 15, 2024</p>
-                <p className="text-gray-600 text-sm">10:00 AM</p>
-              </div>
-            </div>
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8">
+  {/* Header */}
+  <div className="flex items-center justify-between mb-8">
+    <div>
+      <h2 className="text-3xl font-bold text-gray-900">
+        Upcoming Appointments
+      </h2>
+      <p className="text-gray-500 mt-1">
+        You have 2 appointments scheduled
+      </p>
+    </div>
 
-            <div className="flex items-center gap-4 p-4 border-l-4 border-green-600 bg-gray-50 rounded-lg">
-              <div className="text-3xl">💉</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">Vaccination with Dr. Patel</h4>
-                <p className="text-gray-600 text-sm">Bella (Beagle)</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">May 20, 2024</p>
-                <p className="text-gray-600 text-sm">2:30 PM</p>
-              </div>
-            </div>
-          </div>
+    <button className="flex items-center gap-1 font-semibold text-gray-800 hover:text-red-600 transition">
+      View All
+      <ChevronRight size={18} />
+    </button>
+  </div>
+
+  <div className="space-y-5">
+
+    {/* Appointment 1 */}
+    <div className="border-2 border-red-300 rounded-2xl p-5 flex items-center justify-between hover:shadow-lg transition">
+
+      <div className="flex items-center gap-5">
+
+        {/* Icon */}
+        <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+          <Stethoscope className="text-red-600" size={24} />
         </div>
+
+        {/* Avatar */}
+        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-600">
+          MA
+        </div>
+
+        {/* Details */}
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h3 className="font-bold text-xl">
+              Annual Checkup
+            </h3>
+
+            <span className="text-gray-500">
+              with Dr. Sharma
+            </span>
+
+            <span className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-semibold">
+              Checkup
+            </span>
+          </div>
+
+          <p className="text-gray-500 mt-2">
+            Max • Golden Retriever
+          </p>
+        </div>
+      </div>
+
+      {/* Date */}
+      <div className="text-right">
+        <div className="flex items-center justify-end gap-2 font-semibold text-gray-800">
+          <CalendarDays size={18} />
+          May 15, 2024
+        </div>
+
+        <div className="flex items-center justify-end gap-2 mt-2 text-gray-500">
+          <Clock3 size={18} />
+          10:00 AM
+        </div>
+      </div>
+
+    </div>
+
+    {/* Appointment 2 */}
+
+    <div className="border-2 border-green-300 rounded-2xl p-5 flex items-center justify-between hover:shadow-lg transition">
+
+      <div className="flex items-center gap-5">
+
+        <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
+          <Syringe className="text-green-600" size={24} />
+        </div>
+
+        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-600">
+          BE
+        </div>
+
+        <div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h3 className="font-bold text-xl">
+              Vaccination
+            </h3>
+
+            <span className="text-gray-500">
+              with Dr. Patel
+            </span>
+
+            <span className="px-3 py-1 rounded-full bg-green-100 text-green-600 text-xs font-semibold">
+              Vaccination
+            </span>
+          </div>
+
+          <p className="text-gray-500 mt-2">
+            Bella • Beagle
+          </p>
+        </div>
+
+      </div>
+
+      <div className="text-right">
+        <div className="flex items-center justify-end gap-2 font-semibold text-gray-800">
+          <CalendarDays size={18} />
+          May 20, 2024
+        </div>
+
+        <div className="flex items-center justify-end gap-2 mt-2 text-gray-500">
+          <Clock3 size={18} />
+          2:30 PM
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
 
         {/* YOUR PETS */}
         <div className="bg-white rounded-2xl shadow p-8">

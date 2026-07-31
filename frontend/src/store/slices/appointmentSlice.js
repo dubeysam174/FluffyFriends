@@ -27,11 +27,12 @@ import { create } from "axios";
         },
         setError: (state,action)=>{
             state.error=action.payload
-        }
+        },
+        clearAppointmentState:()=> initialState
     }
  })
 
-export const { setAppointments, setVetAppointments, addAppointment, setLoading, setError } = appointmentSlice.actions
+export const { setAppointments, setVetAppointments, addAppointment, setLoading, setError,clearAppointmentState } = appointmentSlice.actions
 export default appointmentSlice.reducer
 
 export const selectAppointments    = (state) => state.appointment.appointments

@@ -2,6 +2,9 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectUser } from "../../store/slices/authSlice";
+import { clearPetState } from "../../store/slices/petSlice";
+import { clearVetState } from "../../store/slices/vetSlice";
+import { clearAppointmentState } from "../../store/slices/appointmentSlice";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import {
@@ -30,6 +33,10 @@ const GlassSidebar = ({isOpen,setIsOpen}) => {
     try {
       await API.post("/auth/logout");
       dispatch(logout());
+      dispatch(clearVetState());
+  dispatch(clearPetState());
+  dispatch(clearAppointmentState());
+ 
       toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Logout failed");

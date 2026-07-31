@@ -24,16 +24,19 @@ const vetSlice = createSlice({
             state.selectedVet=action.payload
 
         },
+ 
         setLoading: (state,action)=>{
             state.loading=action.payload
         },
         setError: (state,action)=>{
             state.error=action.payload
-        }
-    }
+        },
+        clearVetState: () => initialState,
+  },
+    
 })
 
-export const {setVets,setNearbyVets,setSelectedVet,setLoading,setError}=vetSlice.actions
+export const {setVets,setNearbyVets,setSelectedVet,setLoading,setError,clearVetState}=vetSlice.actions
 export default vetSlice.reducer
 
 export const selectVets       = (state) => state.vet.vets

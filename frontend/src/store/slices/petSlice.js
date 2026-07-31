@@ -30,7 +30,9 @@ const petSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    clearPetState: () => initialState,
   },
+  
 });
 
 export const {
@@ -39,6 +41,7 @@ export const {
   setSelectedPet,
   setLoading,
   setError,
+  clearPetState
 } = petSlice.actions;
 
 export default petSlice.reducer;

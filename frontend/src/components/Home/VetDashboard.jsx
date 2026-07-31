@@ -1,11 +1,63 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../store/slices/authSlice";
+import React, { useEffect } from "react";
+import { useSelector,useDispatch  } from "react-redux";
+import {  selectUser } from "../../store/slices/authSlice";
+import API from "../../api/axios";
 import { Users, CalendarDays, MessageSquare,Clock3,Star } from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout";
-
+import {
+  selectVetAppointments,
+  selectLoading,
+  selectError,
+  setVetAppointments,
+  setLoading,
+  setError
+} from "../../store/slices/appointmentSlice";
 const VetDashboard = () => {
   const user = useSelector(selectUser);
+  const dispatch= useDispatch();
+  const appointments = useSelector(selectVetAppointments)
+  const loading = useSelector(selectLoading)
+  const error = useSelector(selectError)
+  const today = new Date().toDateString();
+
+const todaysAppointments = appointments.filter(
+  (appointment) =>
+    new Date(appointment.date).toDateString() === today
+);
+
+  // fetching data from the backed to store in redux and maintain real..
+  useEffect(()=>{
+    const getVetAppointments= async()=>{
+      dispatch(setLoading(true));
+
+      try {
+            const res= await API.get("/appointments/vet-appointments");
+            console.log(res.data)
+            dispatch(setVetAppointments(res.data.appointments))
+      } catch (error) {
+         dispatch(
+                setError(
+                    error.response?.data?.message ||
+                    "Unable to fetch appointments"
+                )
+            );
+      }finally {
+
+            dispatch(setLoading(false));
+
+        }
+
+    }
+    getVetAppointments();
+  },[dispatch])
+
+  // for pending requests in the vet ...
+  const pendingAppointments = appointments.filter(
+  (appointment) => appointment.status === "pending"
+);
+
+// for recent patients..
+const recentPatients = appointments.slice(0, 5);
 
   return (
     <DashboardLayout>
@@ -35,7 +87,7 @@ const VetDashboard = () => {
         </p>
 
         <h2 className="text-4xl font-bold text-gray-900 mt-2">
-          24
+          {appointments.length}
         </h2>
       </div>
 
@@ -54,7 +106,13 @@ const VetDashboard = () => {
         </p>
 
         <h2 className="text-4xl font-bold text-gray-900 mt-2">
-          5
+           {
+    appointments.filter(
+      (appointment) =>
+        new Date(appointment.date).toDateString() ===
+        new Date().toDateString()
+    ).length
+  }
         </h2>
       </div>
 
@@ -73,7 +131,13 @@ const VetDashboard = () => {
         </p>
 
         <h2 className="text-4xl font-bold text-gray-900 mt-2">
-          3
+          
+{
+appointments.filter(
+appointment=>appointment.status==="pending"
+).length
+}
+
         </h2>
       </div>
 
@@ -84,89 +148,85 @@ const VetDashboard = () => {
   </div>
 
   {/* Rating */}
-  <div className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 p-6">
-    <div className="flex justify-between items-start">
-      <div>
-        <p className="text-gray-500 text-sm font-medium">
-          Rating
-        </p>
-
-        <h2 className="text-4xl font-bold text-gray-900 mt-2">
-          4.8
-        </h2>
-      </div>
-
-      <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center">
-        <Star className="text-gray-600" size={28} />
-      </div>
-    </div>
-  </div>
+  
 
 </div>
 
 
         {/* TODAY'S APPOINTMENTS */}
         <div className="bg-white rounded-2xl shadow p-8">
-          <h2 className="text-3xl font-bold text-gray-900  mb-6">
-            Today's Appointments
-          </h2>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-4 border-l-4 border-green-600 bg-gray-50 rounded-lg">
-              <div className="text-3xl">🐕</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">
-                  Max (Golden Retriever)
-                </h4>
-                <p className="text-gray-600 text-sm">
-                  Owner: John Doe • Annual Checkup
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">10:00 AM</p>
-                <span className="text-green-600 text-sm font-semibold">
-                  Confirmed
-                </span>
-              </div>
-            </div>
+  <h2 className="text-3xl font-bold text-gray-900 mb-6">
+    Today's Appointments
+  </h2>
 
-            <div className="flex items-center gap-4 p-4 border-l-4 border-yellow-600 bg-gray-50 rounded-lg">
-              <div className="text-3xl">🐈</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">Bella (Beagle)</h4>
-                <p className="text-gray-600 text-sm">
-                  Owner: Sarah • Vaccination
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">11:30 AM</p>
-                <span className="text-yellow-600 text-sm font-semibold">
-                  Pending
-                </span>
-              </div>
-            </div>
+  <div className="space-y-4">
+    {todaysAppointments.length > 0 ? (
+      todaysAppointments.map((appointment) => (
+        <div
+          key={appointment._id}
+          className={`flex items-center gap-4 p-4 rounded-lg border-l-4 ${
+            appointment.status === "confirmed"
+              ? "border-green-600"
+              : appointment.status === "pending"
+              ? "border-yellow-500"
+              : appointment.status === "completed"
+              ? "border-blue-600"
+              : "border-red-600"
+          } bg-gray-50`}
+        >
+          {/* Pet Icon */}
+          <div className="text-3xl">
+            {appointment.pet.species === "dog"
+              ? "🐕"
+              : appointment.pet.species === "cat"
+              ? "🐈"
+              : "🐾"}
+          </div>
 
-            <div className="flex items-center gap-4 p-4 border-l-4 border-red-600 bg-gray-50 rounded-lg">
-              <div className="text-3xl">🐩</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-900">
-                  Charlie (Poodle)
-                </h4>
-                <p className="text-gray-600 text-sm">
-                  Owner: Mike • Grooming & Health Check
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">1:00 PM</p>
-                <span className="text-red-600 text-sm font-semibold">
-                  Urgent
-                </span>
-              </div>
-            </div>
+          {/* Pet Details */}
+          <div className="flex-1">
+            <h4 className="font-semibold text-gray-900">
+              {appointment.pet.name} ({appointment.pet.breed})
+            </h4>
+
+            <p className="text-gray-600 text-sm">
+              Owner: {appointment.petOwner.name} • {appointment.reason}
+            </p>
+          </div>
+
+          {/* Time & Status */}
+          <div className="text-right">
+            <p className="font-semibold text-gray-900">
+              {appointment.slot}
+            </p>
+
+            <span
+              className={`text-sm font-semibold ${
+                appointment.status === "confirmed"
+                  ? "text-green-600"
+                  : appointment.status === "pending"
+                  ? "text-yellow-600"
+                  : appointment.status === "completed"
+                  ? "text-blue-600"
+                  : "text-red-600"
+              }`}
+            >
+              {appointment.status}
+            </span>
           </div>
         </div>
+      ))
+    ) : (
+      <div className="text-center py-10 text-gray-500">
+        No appointments scheduled for today.
+      </div>
+    )}
+  </div>
+</div>
 
         {/* APPOINTMENT REQUESTS */}
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden">
+
   {/* Header */}
   <div className="flex items-center justify-between px-6 py-5">
     <h2 className="text-3xl font-bold text-gray-900">
@@ -174,181 +234,95 @@ const VetDashboard = () => {
     </h2>
 
     <span className="bg-blue-100 text-blue-600 text-sm font-semibold px-4 py-1 rounded-full">
-      3 pending
+      {pendingAppointments.length} Pending
     </span>
   </div>
 
-  {/* Request 1 */}
-  <div className="flex items-center justify-between px-6 py-5 border-t border-gray-200 hover:bg-gray-50 transition">
-    <div>
-      <div className="flex items-center gap-3">
-        <h3 className="font-bold text-lg text-gray-900">
-          Lucky <span className="text-gray-500">(Labrador)</span>
-        </h3>
+  {pendingAppointments.length > 0 ? (
+    pendingAppointments.map((appointment) => (
+      <div
+        key={appointment._id}
+        className="flex items-center justify-between px-6 py-5 border-t border-gray-200 hover:bg-gray-50 transition"
+      >
+        {/* Left */}
+        <div>
+          <div className="flex items-center gap-3">
+            <h3 className="font-bold text-lg text-gray-900">
+              {appointment.pet.name}
+              <span className="text-gray-500">
+                {" "}
+                ({appointment.pet.breed})
+              </span>
+            </h3>
 
-        <span className="bg-red-100 text-red-500 text-xs font-semibold px-3 py-1 rounded-full">
-          Emergency
-        </span>
+            <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full capitalize">
+              {appointment.reason}
+            </span>
+          </div>
+
+          <p className="text-gray-500 mt-1">
+            Owner: {appointment.petOwner.name}
+          </p>
+
+          <p className="text-gray-400 text-sm mt-1">
+            {appointment.date.split("T")[0]} • {appointment.slot}
+          </p>
+        </div>
+
+        {/* Right */}
+        
       </div>
-
-      <p className="text-gray-500 mt-1">
-        Owner: Tom • Urgent consultation needed
-      </p>
+    ))
+  ) : (
+    <div className="py-10 text-center text-gray-500">
+      No Pending Appointment Requests
     </div>
-
-    <div className="flex gap-3">
-      <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl transition">
-        Accept
-      </button>
-
-      <button className="border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition">
-        Decline
-      </button>
-    </div>
-  </div>
-
-  {/* Request 2 */}
-  <div className="flex items-center justify-between px-6 py-5 border-t border-gray-200 hover:bg-gray-50 transition">
-    <div>
-      <div className="flex items-center gap-3">
-        <h3 className="font-bold text-lg text-gray-900">
-          Rocky <span className="text-gray-500">(German Shepherd)</span>
-        </h3>
-
-        <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">
-          Vaccination
-        </span>
-      </div>
-
-      <p className="text-gray-500 mt-1">
-        Owner: Lisa • Vaccination appointment
-      </p>
-    </div>
-
-    <div className="flex gap-3">
-      <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl transition">
-        Accept
-      </button>
-
-      <button className="border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition">
-        Decline
-      </button>
-    </div>
-  </div>
-
-  {/* Request 3 */}
-  <div className="flex items-center justify-between px-6 py-5 border-t border-gray-200 hover:bg-gray-50 transition">
-    <div>
-      <div className="flex items-center gap-3">
-        <h3 className="font-bold text-lg text-gray-900">
-          Bella <span className="text-gray-500">(Beagle)</span>
-        </h3>
-
-        <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">
-          Routine
-        </span>
-      </div>
-
-      <p className="text-gray-500 mt-1">
-        Owner: Sam • Annual check-up
-      </p>
-    </div>
-
-    <div className="flex gap-3">
-      <button className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl transition">
-        Accept
-      </button>
-
-      <button className="border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-xl font-semibold transition">
-        Decline
-      </button>
-    </div>
-  </div>
+  )}
 </div>
 
         {/* PATIENT STATISTICS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* TOP PATIENTS */}
-          <div className="bg-white rounded-2xl shadow p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              Recent Patients
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-900">Buddy</p>
-                  <p className="text-gray-600 text-sm">
-                    Owner: Alex • Last visit: 2 days ago
-                  </p>
-                </div>
-                <span className="text-2xl">🐕</span>
-              </div>
-              <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-900">Luna</p>
-                  <p className="text-gray-600 text-sm">
-                    Owner: Emma • Last visit: 1 week ago
-                  </p>
-                </div>
-                <span className="text-2xl">🐈</span>
-              </div>
-              <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-900">Daisy</p>
-                  <p className="text-gray-600 text-sm">
-                    Owner: Chris • Last visit: 3 days ago
-                  </p>
-                </div>
-                <span className="text-2xl">🐩</span>
-              </div>
-            </div>
+        <div className="bg-white rounded-2xl shadow p-8">
+  <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    Recent Patients
+  </h2>
+
+  <div className="space-y-4">
+    {recentPatients.length > 0 ? (
+      recentPatients.map((appointment) => (
+        <div
+          key={appointment._id}
+          className="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+        >
+          <div>
+            <p className="font-semibold text-gray-900">
+              {appointment.pet.name}
+            </p>
+
+            <p className="text-gray-600 text-sm">
+              Owner: {appointment.petOwner.name}
+            </p>
+
+            <p className="text-gray-400 text-xs">
+              {new Date(appointment.date).toLocaleDateString()}
+            </p>
           </div>
 
-          {/* PERFORMANCE */}
-          <div className="bg-white rounded-2xl shadow p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              This Month Stats
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">Completed Appointments</span>
-                  <span className="font-semibold text-gray-900">28/30</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-green-600 h-2 rounded-full"
-                    style={{ width: "93%" }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">Patient Satisfaction</span>
-                  <span className="font-semibold text-gray-900">98%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: "98%" }}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-gray-700">On-Time Rate</span>
-                  <span className="font-semibold text-gray-900">96%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-purple-600 h-2 rounded-full"
-                    style={{ width: "96%" }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <span className="text-2xl">
+            {appointment.pet.species === "dog"
+              ? "🐕"
+              : appointment.pet.species === "cat"
+              ? "🐈"
+              : "🐾"}
+          </span>
         </div>
+      ))
+    ) : (
+      <p className="text-gray-500 text-center">
+        No Recent Patients
+      </p>
+    )}
+  </div>
+</div>
       </div>
     </DashboardLayout>
   );

@@ -36,3 +36,8 @@ export default appointmentSlice.reducer
 
 export const selectAppointments    = (state) => state.appointment.appointments
 export const selectVetAppointments = (state) => state.appointment.vetAppointments
+export const selectLoading = (state) =>
+  state.appointment.loading;
+
+export const selectError = (state) =>
+  state.appointment.error;

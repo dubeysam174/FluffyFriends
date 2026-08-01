@@ -6,6 +6,7 @@ import {createVetProfile,
         getNearbyVets,
         getVetById,
         getAllVets,
+        searchVets
 } from '../controllers/vet.controller.js'
 
 import {protect,vetOnly,petOwnerOnly} from '../middleware/auth.middleware.js'
@@ -20,6 +21,7 @@ router.post('/create-profile', protect, vetOnly, createVetProfile)
 
 router.get('/my-profile', protect, vetOnly, getMyVetProfile)
 router.put('/update-profile', protect, vetOnly, updateVetProfile)
+router.get("/search",petOwnerOnly, searchVets);
 // dynamic routes should be last ...
 router.get('/:id', protect, getVetById)
 export default router

@@ -169,3 +169,54 @@ export const getAllVets = asyncHandler(async (req, res) => {
     vets
   })
 })
+
+// search vet functionality...
+export const searchVets = asyncHandler(async (req, res) => {
+  const { q } = req.query;
+
+  if (!q) {
+    return res.json({
+      success: true,
+      vets: []
+    });
+  }
+
+  const vets = await Vet.find({
+    verificationStatus: "approved",
+    isAvailable: true,
+    $or: [
+      {
+        clinicName: {
+          $regex: q,
+          $options: "i",
+        },
+      },
+      {
+        city: {
+          $regex: q,
+          $options: "i",
+        },
+      },
+      {
+        address: {
+          $regex: q,
+          $options: "i",
+        },
+      },
+      {
+        specializations: {
+          $regex: q,
+          $options: "i",
+        },
+      },
+    ],
+  })
+    .populate("user", "name email avatar")
+    .select("-availableSlots");
+
+  res.json({
+    success: true,
+    count: vets.length,
+    vets,
+  });
+});

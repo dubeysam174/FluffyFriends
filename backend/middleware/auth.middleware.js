@@ -58,5 +58,8 @@ export const petOwnerOnly=(req,res,next)=>{
         res.status(403)
         throw new Error('Access denied,pet owners only')
     }
+    console.log("Decoded Token:", decoded);
+console.log("User from DB:", req.user);
+console.log("User Role:", req.user?.role);
     next()
 }

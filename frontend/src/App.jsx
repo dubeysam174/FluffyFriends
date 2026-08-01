@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 
 
+
 const ProtectedRoute = ({ children }) => {
   const user = useSelector(selectUser);
   return user ? children : <Navigate to="/login" />;
@@ -68,6 +69,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/find-vet"
+  element={
+    <ProtectedRoute>
+      <FindVet />
+    </ProtectedRoute>
+  }
+/>
 
       </Routes>
     </>

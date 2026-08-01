@@ -7,15 +7,12 @@ import { asyncHandler } from '../utils/asyncHandler.js'
 // protected routes.... for accessing you need to access or login...
 
 export const protect = asyncHandler(async(req,res,next)=>{
-    console.log('headers:', req.headers)           // see all headers
-  console.log('auth header:', req.headers.authorization)
     let token
 
     // check if token in auth header...
     if(req.headers.authorization?.startsWith('Bearer')){
         token = req.headers.authorization.split(' ')[1]
     }
-    console.log('token extracted:', token)  // see if token is extracted
 
     // when no token found...
     if(!token){
@@ -54,12 +51,11 @@ export const vetOnly = (req, res, next) => {
 
 // pet owner only...
 export const petOwnerOnly=(req,res,next)=>{
+     console.log("req.user =", req.user);
+    console.log("req.user.role =", req.user?.role);
     if(req.user?.role!=='petOwner'){
         res.status(403)
         throw new Error('Access denied,pet owners only')
     }
-    console.log("Decoded Token:", decoded);
-console.log("User from DB:", req.user);
-console.log("User Role:", req.user?.role);
     next()
 }

@@ -69,14 +69,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-  path="/find-vet"
-  element={
-    <ProtectedRoute>
-      <FindVet />
-    </ProtectedRoute>
-  }
-/>
+ 
 
       </Routes>
     </>

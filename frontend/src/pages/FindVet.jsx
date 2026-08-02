@@ -4,6 +4,7 @@ import MapView from "../components/FindVet/MapView";
 import VetList from "../components/FindVet/VetList";
 import { getNearbyVets, searchVets, getAllVets } from "../api/vetAPI";
 import toast from "react-hot-toast";
+import DashboardLayout from "../components/layout/DashboardLayout";
 
 const FindVet = () => {
   const [vets, setVets] = useState([]);
@@ -122,6 +123,8 @@ const FindVet = () => {
   };
 
   return (
+    <DashboardLayout>
+
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
@@ -139,8 +142,8 @@ const FindVet = () => {
             onClick={() => setViewType("grid")}
             className={`px-4 py-2 rounded-lg font-semibold transition ${
               viewType === "grid"
-                ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 border-2 border-gray-200"
+              ? "bg-red-600 text-white"
+              : "bg-white text-gray-700 border-2 border-gray-200"
             }`}
           >
             Grid View
@@ -151,8 +154,8 @@ const FindVet = () => {
               viewType === "map"
                 ? "bg-red-600 text-white"
                 : "bg-white text-gray-700 border-2 border-gray-200"
-            }`}
-          >
+                }`}
+                >
             Map View
           </button>
         </div>
@@ -164,6 +167,7 @@ const FindVet = () => {
         <VetList vets={vets} loading={loading} error={error} />
       </div>
     </div>
+            </DashboardLayout>
   );
 };
 

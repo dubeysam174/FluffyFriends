@@ -10,6 +10,7 @@ import { getMyAppointments, cancelAppointment } from "../../api/appointmentAPI";
 import AppointmentCard from "./AppointmentCard";
 import toast from "react-hot-toast";
 import { Calendar, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PetOwnerAppointments = () => {
   const dispatch = useDispatch();
@@ -81,10 +82,12 @@ const PetOwnerAppointments = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">My Appointments</h1>
           <p className="text-gray-600">Manage your veterinary appointments</p>
         </div>
+        <Link to='/find-vet'>
         <button className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
           <Plus size={20} />
           Book New
         </button>
+        </Link>
       </div>
 
       {/* STATS */}
@@ -129,9 +132,11 @@ const PetOwnerAppointments = () => {
         <div className="bg-gray-50 rounded-xl border-2 border-gray-200 p-12 text-center">
           <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
           <p className="text-gray-600 text-lg">No {filter === "all" ? "" : filter} appointments</p>
+          <Link to="/find-vet">
           <button className="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
             Book Appointment
           </button>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

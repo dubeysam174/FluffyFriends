@@ -17,7 +17,7 @@ export const getMyAppointments=async()=>{
 export const bookAppointment= async(data)=>{
     try {
         const response = await API.post("/appointments/book",data)
-        return response.data;
+        return response;
     } catch (error) {
         throw error;
     }

@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Trash2, Edit2, Heart } from "lucide-react";
 import { deletePet } from "../../api/profileAPI";
 import toast from "react-hot-toast";
-import AddEditPet from "./AddEditPet";
-
+// import AddEditPet from "./AddEditPet";
 const PetList = ({ pets, onPetUpdate }) => {
+  console.log("pets:", pets);
+  console.log("Is Array?", Array.isArray(pets));
   const [editingPet, setEditingPet] = useState(null);
   const [editPetOpen, setEditPetOpen] = useState(false);
 
@@ -91,7 +92,7 @@ const PetList = ({ pets, onPetUpdate }) => {
       </div>
 
       {/* EDIT PET DIALOG */}
-      <AddEditPet
+      {/* <AddEditPet
         isOpen={editPetOpen}
         onClose={() => {
           setEditPetOpen(false);
@@ -103,7 +104,7 @@ const PetList = ({ pets, onPetUpdate }) => {
           setEditingPet(null);
         }}
         editingPet={editingPet}
-      />
+      /> */}
     </>
   );
 };

@@ -6,7 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../components/ui/dialog";
+} from "../ui/dialog"
 import { updateUserProfile } from "../../api/profileAPI";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";

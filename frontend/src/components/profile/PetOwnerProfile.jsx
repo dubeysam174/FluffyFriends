@@ -6,7 +6,7 @@ import { Mail, Phone, MapPin, Edit2, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import PetList from "./PetList";
 import EditPetOwnerProfile from "./EditPetOwnerProfile";
-import AddEditPet from "./AddEditPet";
+// import AddEditPet from "./AddEditPet";
 
 const PetOwnerProfile = () => {
   const user = useSelector(selectUser);
@@ -26,13 +26,12 @@ const PetOwnerProfile = () => {
       
       // Fetch user profile
       const profileResponse = await getUserProfile();
-      console.log("Profile response:", profileResponse);
-      setProfileData(profileResponse.data);
-
+console.log(profileResponse.data);      
+setProfileData(profileResponse.data.user);
       // Fetch pets
       const petsResponse = await getMyPets();
       console.log("Pets response:", petsResponse);
-      setPets(petsResponse.data || []);
+setPets(petsResponse.data.pets || []);
     } catch (error) {
       console.error("Error fetching profile:", error);
       toast.error("Failed to load profile");
@@ -138,11 +137,11 @@ const PetOwnerProfile = () => {
       />
 
       {/* ADD PET DIALOG */}
-      <AddEditPet
+      {/* <AddEditPet
         isOpen={addPetOpen}
         onClose={() => setAddPetOpen(false)}
         onSuccess={fetchProfileData}
-      />
+      /> */}
     </div>
   );
 };

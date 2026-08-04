@@ -11,6 +11,7 @@ import vetRoutes from './routes/vet.route.js'
 import petRoutes from './routes/pet.route.js'
 import appointmentRoutes from './routes/appointment.route.js'
 import chatRoutes from './routes/chat.route.js'
+import userRoutes from './routes/user.route.js'
 import { notFound,
          errorHandler }     from './middleware/error.Middleware.js'
 import initSocket from './socket/index.js'
@@ -41,6 +42,7 @@ app.use('/api/vets', vetRoutes)
 app.use('/api/pets',petRoutes)
 app.use('/api/appointments',appointmentRoutes)
 app.use('/api/chat', chatRoutes)
+app.use('/api/user',userRoutes)
 
 
 // ── Error handling 

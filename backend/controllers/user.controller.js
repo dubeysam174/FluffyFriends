@@ -5,60 +5,38 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // ======================
 // Get Logged-in User
 // ======================
-export const getUserProfile =  asyncHandler(async(req, res) => {
-   
+export const getUserProfile = asyncHandler(async (req, res) => {
 
-        const user = await User.findById(req.user._id).select("-password");
+    return res.status(200).json({
+        success: true,
+        user: req.user
+    });
 
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            user
-        });
-
-    
 });
 
-// ======================
+
 // Update Logged-in User
-// ======================
-export const updateUserProfile = asyncHandler(async(req, res) => {
-    
 
-        const { name, phone } = req.body;
+export const updateUserProfile = asyncHandler(async (req, res) => {
 
-        const user = await User.findById(req.user._id);
+    const { name, phone } = req.body;
 
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            });
-        }
+    const user = req.user;
 
-        // Update only if value exists
-        if (name) user.name = name;
-        if (phone) user.phone = phone;
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
 
-        // If you're uploading an image later
-        // if(req.file){
-        //     user.profilePhoto = imageUrl;
-        // }
+    // Later
+    // if(req.file){
+    //     user.profilePhoto = imageUrl;
+    // }
 
-        await user.save();
+    await user.save();
 
-        return res.status(200).json({
-            success: true,
-            message: "Profile updated successfully",
-            user
-        });
+    return res.status(200).json({
+        success: true,
+        message: "Profile updated successfully",
+        user
+    });
 
-  
-    
 });

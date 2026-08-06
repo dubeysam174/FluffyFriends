@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../store/slices/authSlice";
 import PetOwnerProfile from "../components/Profile/PetOwnerProfile";
-// import VetProfile from "../components/Profile/VetProfile";
+import VetProfile from "../components/profile/VetProfile";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

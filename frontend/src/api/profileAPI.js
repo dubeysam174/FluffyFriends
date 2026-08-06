@@ -68,7 +68,7 @@ export const deletePet = async (petId) => {
 // VET PROFILE
 export const getVetProfile = async () => {
   try {
-    const response = await API.get("/vets/profile");
+    const response = await API.get("/vets/my-profile");
     return response;
   } catch (error) {
     throw error;
@@ -77,7 +77,7 @@ export const getVetProfile = async () => {
 
 export const updateVetProfile = async (data) => {
   try {
-    const response = await API.put("/vets/profile", data);
+    const response = await API.put("/vets/update-profile", data);
     return response;
   } catch (error) {
     throw error;

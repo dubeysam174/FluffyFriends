@@ -6,7 +6,7 @@ import { Mail, Phone, MapPin, Edit2, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import PetList from "./PetList";
 import EditPetOwnerProfile from "./EditPetOwnerProfile";
-// import AddEditPet from "./AddEditPet";
+import AddEditPet from "./EditPet";
 
 const PetOwnerProfile = () => {
   const user = useSelector(selectUser);
@@ -23,15 +23,15 @@ const PetOwnerProfile = () => {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch user profile
       const profileResponse = await getUserProfile();
-console.log(profileResponse.data);      
-setProfileData(profileResponse.data.user);
+      console.log(profileResponse.data);
+      setProfileData(profileResponse.data.user);
       // Fetch pets
       const petsResponse = await getMyPets();
       console.log("Pets response:", petsResponse);
-setPets(petsResponse.data.pets || []);
+      setPets(petsResponse.data.pets || []);
     } catch (error) {
       console.error("Error fetching profile:", error);
       toast.error("Failed to load profile");
@@ -41,7 +41,11 @@ setPets(petsResponse.data.pets || []);
   };
 
   if (loading) {
-    return <div className="text-center py-12"><p className="text-gray-600">Loading profile...</p></div>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
   }
 
   const displayData = profileData || user;
@@ -55,7 +59,11 @@ setPets(petsResponse.data.pets || []);
             {/* PROFILE PICTURE */}
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center text-white text-3xl font-bold overflow-hidden">
               {displayData?.avatar ? (
-                <img src={displayData.avatar} alt={displayData.name} className="w-full h-full object-cover" />
+                <img
+                  src={displayData.avatar}
+                  alt={displayData.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 displayData?.name?.charAt(0).toUpperCase()
               )}
@@ -63,9 +71,15 @@ setPets(petsResponse.data.pets || []);
 
             {/* USER INFO */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{displayData?.name}</h1>
-              <p className="text-gray-600 mb-3">{displayData?.role === "petOwner" ? "Pet Owner" : "Veterinarian"}</p>
-              
+              <h1 className="text-3xl font-bold text-gray-900">
+                {displayData?.name}
+              </h1>
+              <p className="text-gray-600 mb-3">
+                {displayData?.role === "petOwner"
+                  ? "Pet Owner"
+                  : "Veterinarian"}
+              </p>
+
               <div className="space-y-2">
                 {displayData?.email && (
                   <div className="flex items-center gap-2 text-gray-700">
@@ -137,11 +151,11 @@ setPets(petsResponse.data.pets || []);
       />
 
       {/* ADD PET DIALOG */}
-      {/* <AddEditPet
+      <AddEditPet
         isOpen={addPetOpen}
         onClose={() => setAddPetOpen(false)}
         onSuccess={fetchProfileData}
-      /> */}
+      />
     </div>
   );
 };

@@ -54,7 +54,7 @@ app.use(errorHandler)
 connectDB()
   .then(() => {
     server.listen(process.env.PORT || 8000, () => {
-      console.log(`🚀 Server running on http://localhost:${process.env.PORT || 8000}`)
+      console.log(`Server running on http://localhost:${process.env.PORT || 8000}`)
     })
   })
   .catch((err) => {

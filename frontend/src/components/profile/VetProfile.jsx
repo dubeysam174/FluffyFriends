@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
+import {
+    selectMyProfile,
+    selectVetLoading,
+    setMyProfile,
+    setLoading,
+    setError,
+} from "../../store/slices/vetSlice";
 
 import { getVetProfile } from "../../api/profileAPI";
 import {
@@ -18,6 +25,7 @@ import EditVetProfile from "./EditVetProfile";
 
 const VetProfile = () => {
   const user = useSelector(selectUser);
+  const dispatch= useDispatch();
   const [vetData, setVetData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -32,7 +40,10 @@ const VetProfile = () => {
     const response = await getVetProfile();
     console.log("🔍 RAW RESPONSE:", response);        // ← ADD
     console.log("🔍 RESPONSE.DATA:", response.data);  // ← ADD
-    setVetData(response.data?.vet);
+    dispatch(setMyProfile(response.data?.vet));
+   
+
+console.log("After dispatch");
     console.log("🔍 SET VET DATA:", response.data?.vet);   // ← ADD
   } catch (error) {
     console.error("Error:", error);

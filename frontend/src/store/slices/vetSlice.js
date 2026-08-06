@@ -45,6 +45,6 @@ export default vetSlice.reducer
 export const selectVets       = (state) => state.vet.vets
 export const selectNearbyVets = (state) => state.vet.nearbyVets
 export const selectSelectedVet = (state) => state.vet.selectedVet
-export const selectMyVetProfile = (state) => state.vet.myProfile;
+export const selectMyProfile = (state) => state.vet.myProfile;
 export const selectVetLoading = (state) => state.vet.loading;
 export const selectVetError = (state) => state.vet.error;

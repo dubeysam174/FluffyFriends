@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Star, Phone, Award, Calendar, Clock, FileText } from "lucide-react";
+import {
+  MapPin,
+  Star,
+  Phone,
+  Award,
+  Calendar,
+  Clock,
+  FileText,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +18,11 @@ import {
 import { bookAppointment } from "../../api/appointmentAPI";
 import { getMyPets } from "../../api/petAPI";
 import toast from "react-hot-toast";
+import VetProfile from "../profile/VetProfile";
 
 const VetCard = ({ vet }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [pets, setPets] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -44,8 +54,14 @@ const VetCard = ({ vet }) => {
   };
 
   const timeSlots = [
-    "9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
-    "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM",
+    "9:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "12:00 PM",
+    "2:00 PM",
+    "3:00 PM",
+    "4:00 PM",
+    "5:00 PM",
   ];
 
   const validateForm = () => {
@@ -123,10 +139,11 @@ const VetCard = ({ vet }) => {
       setTimeout(() => {
         window.location.href = "/appointments";
       }, 500);
-
     } catch (error) {
       console.error("Error booking appointment:", error);
-      toast.error(error.response?.data?.message || "Failed to book appointment");
+      toast.error(
+        error.response?.data?.message || "Failed to book appointment",
+      );
       setLoading(false);
     }
   };
@@ -145,17 +162,21 @@ const VetCard = ({ vet }) => {
           />
           <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center gap-1">
             <Star size={16} className="text-yellow-500 fill-yellow-500" />
-            <span className="font-semibold text-gray-900">{vet.rating || 4.8}</span>
+            <span className="font-semibold text-gray-900">
+              {vet.rating || 4.8}
+            </span>
           </div>
         </div>
 
         {/* VET INFO */}
         <div className="space-y-2 mb-4">
           <h3 className="text-xl font-bold text-gray-900">Dr. {vet.name}</h3>
-          
+
           <div className="flex items-center gap-2 text-gray-600">
             <Award size={16} className="text-red-600" />
-            <span className="text-sm">{vet.specialization || "General Veterinarian"}</span>
+            <span className="text-sm">
+              {vet.specialization || "General Veterinarian"}
+            </span>
           </div>
 
           <p className="text-sm text-gray-600">
@@ -193,7 +214,10 @@ const VetCard = ({ vet }) => {
           >
             Book Appointment
           </button>
-          <button className="flex-1 border-2 border-red-600 text-red-600 hover:bg-red-50 font-semibold py-2 rounded-lg transition">
+          <button
+            onClick={() => setIsProfileOpen(true)} // ← ADD THIS
+            className="flex-1 border-2 border-red-600 text-red-600 hover:bg-red-50 font-semibold py-2 rounded-lg transition"
+          >
             View Profile
           </button>
         </div>
@@ -211,7 +235,9 @@ const VetCard = ({ vet }) => {
 
           {/* VET INFO */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600 mb-2">Booking appointment with:</p>
+            <p className="text-sm text-gray-600 mb-2">
+              Booking appointment with:
+            </p>
             <div className="flex items-center gap-4">
               <img
                 src={vet.image || "https://via.placeholder.com/80"}
@@ -219,9 +245,15 @@ const VetCard = ({ vet }) => {
                 className="w-16 h-16 object-cover rounded-lg"
               />
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Dr. {vet.name}</h3>
-                <p className="text-sm text-gray-600">{vet.specialization || "General Veterinarian"}</p>
-                <p className="text-sm text-gray-600">⭐ {vet.rating || 4.8}/5</p>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Dr. {vet.name}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {vet.specialization || "General Veterinarian"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  ⭐ {vet.rating || 4.8}/5
+                </p>
               </div>
             </div>
           </div>
@@ -246,7 +278,9 @@ const VetCard = ({ vet }) => {
                   </option>
                 ))}
               </select>
-              {errors.petId && <p className="text-red-600 text-sm mt-1">{errors.petId}</p>}
+              {errors.petId && (
+                <p className="text-red-600 text-sm mt-1">{errors.petId}</p>
+              )}
             </div>
 
             {/* APPOINTMENT TYPE */}
@@ -294,12 +328,14 @@ const VetCard = ({ vet }) => {
                 min={today}
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition"
               />
-              {errors.date && <p className="text-red-600 text-sm mt-1">{errors.date}</p>}
+              {errors.date && (
+                <p className="text-red-600 text-sm mt-1">{errors.date}</p>
+              )}
             </div>
 
             {/* TIME SLOT */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <Clock size={18} />
                 Select Time Slot *
               </label>
@@ -319,12 +355,14 @@ const VetCard = ({ vet }) => {
                   </button>
                 ))}
               </div>
-              {errors.slot && <p className="text-red-600 text-sm mt-1">{errors.slot}</p>}
+              {errors.slot && (
+                <p className="text-red-600 text-sm mt-1">{errors.slot}</p>
+              )}
             </div>
 
             {/* REASON */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <FileText size={18} />
                 Reason for Visit *
               </label>
@@ -336,7 +374,9 @@ const VetCard = ({ vet }) => {
                 rows="4"
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition resize-none"
               ></textarea>
-              {errors.reason && <p className="text-red-600 text-sm mt-1">{errors.reason}</p>}
+              {errors.reason && (
+                <p className="text-red-600 text-sm mt-1">{errors.reason}</p>
+              )}
             </div>
 
             {/* BUTTONS */}
@@ -357,6 +397,12 @@ const VetCard = ({ vet }) => {
               </button>
             </div>
           </form>
+          {/* VET PROFILE DIALOG */}
+<VetProfileDialog
+  isOpen={isProfileOpen}
+  onClose={() => setIsProfileOpen(false)}
+  vetId={vet._id}
+/>
         </DialogContent>
       </Dialog>
     </>

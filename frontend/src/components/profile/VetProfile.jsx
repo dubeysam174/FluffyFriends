@@ -24,33 +24,33 @@ import toast from "react-hot-toast";
 import EditVetProfile from "./EditVetProfile";
 
 const VetProfile = () => {
-  const user = useSelector(selectUser);
-  const dispatch= useDispatch();
-  const [vetData, setVetData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+const user = useSelector(selectUser);
+const dispatch= useDispatch();
+    const profile = useSelector(selectMyProfile);
+    const loading = useSelector(selectVetLoading);
+
+    const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     fetchVetProfile();
   }, []);
 
- const fetchVetProfile = async () => {
-  try {
-    setLoading(true);
-    const response = await getVetProfile();
-    console.log("🔍 RAW RESPONSE:", response);        // ← ADD
-    console.log("🔍 RESPONSE.DATA:", response.data);  // ← ADD
-    dispatch(setMyProfile(response.data?.vet));
-   
+const fetchVetProfile = async () => {
+    try {
+        dispatch(setLoading(true));
 
-console.log("After dispatch");
-    console.log("🔍 SET VET DATA:", response.data?.vet);   // ← ADD
-  } catch (error) {
-    console.error("Error:", error);
-    toast.error("Failed to load vet profile");
-  } finally {
-    setLoading(false);
-  }
+        const response = await getVetProfile();
+
+        if (response.data.success) {
+            dispatch(setMyProfile(response.data.vet));
+        }
+
+    } catch (error) {
+        dispatch(setError(error.message));
+        toast.error("Failed to load profile");
+    } finally {
+        dispatch(setLoading(false));
+    }
 };
 
   if (loading) {
@@ -61,7 +61,7 @@ console.log("After dispatch");
     );
   }
 
-  const displayData = vetData || user;
+  const displayData= profile || user
 
   return (
     <div className="space-y-8">
@@ -134,7 +134,7 @@ console.log("After dispatch");
           <div>
             <p className="text-sm text-gray-600 mb-1">Clinic Name</p>
             <p className="text-xl font-semibold text-gray-900">
-              {displayData?.clinicName || "N/A"}
+              {profile?.clinicName || "N/A"}
             </p>
           </div>
 

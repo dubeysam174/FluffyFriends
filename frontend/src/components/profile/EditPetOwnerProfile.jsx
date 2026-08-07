@@ -8,12 +8,13 @@ import {
   DialogTitle,
 } from "../ui/dialog"
 import { updateUserProfile } from "../../api/profileAPI";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../store/slices/authSlice";
+import { useSelector,useDispatch } from "react-redux";
+import { selectUser,updateUser } from "../../store/slices/authSlice";
 import toast from "react-hot-toast";
 
 const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
   const user = useSelector(selectUser);
+  const dispatch= useDispatch()
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -119,6 +120,9 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
       console.log("Updating profile with data:", updateData);
 
       const response = await updateUserProfile(updateData);
+      dispatch(updateUser(response.data.user))  // ← Extract .user only
+
+
 
       toast.success("Profile updated successfully!");
       setLoading(false);

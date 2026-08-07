@@ -2,7 +2,7 @@ import API from "./axios";
 
 export const getMyPets = async () => {
   try {
-    const response = await API.get("/pets");
+    const response = await API.get("pets/my-pets");
     return response;
   } catch (error) {
     throw error;

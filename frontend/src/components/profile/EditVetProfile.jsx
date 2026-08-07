@@ -8,12 +8,15 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { updateVetProfile, getVetProfile } from "../../api/profileAPI";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
+import { selectMyProfile, setMyProfile } from "../../store/slices/vetSlice";
 import toast from "react-hot-toast";
 
 const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
   const user = useSelector(selectUser);
+  const dispatch=useDispatch();
+  const profile= useSelector(selectMyProfile)
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [tab, setTab] = useState("basic");
@@ -47,34 +50,26 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
 
   // Initialize form with vet data
   useEffect(() => {
-    if (isOpen) {
-      fetchAndInitializeForm();
-    }
-  }, [isOpen]);
+    if (isOpen && profile) {
+        setFormData({
+            clinicName: profile.clinicName || "",
+            phone: profile.phone || "",
+            address: profile.address || "",
+            city: profile.city || "",
+            bio: profile.bio || "",
+            experience: profile.experience || "",
+            consultationFee: profile.consultationFee || "",
+            specializations: profile.specializations || [],
+            availableDays: profile.availableDays || [],
+            availableSlots: profile.availableSlots || [],
+        });
 
-  const fetchAndInitializeForm = async () => {
-    try {
-      const response = await getVetProfile();
-      const vetData = response.data;
-      setFormData({
-        clinicName: vetData.clinicName || "",
-        phone: vetData.phone || "",
-        address: vetData.address || "",
-        city: vetData.city || "",
-        bio: vetData.bio || "",
-        experience: vetData.experience || "",
-        consultationFee: vetData.consultationFee || "",
-        specializations: vetData.specializations || [],
-        availableDays: vetData.availableDays || [],
-        availableSlots: vetData.availableSlots || [],
-      });
-      setPreviewImage(user?.avatar || null);
-      setErrors({});
-    } catch (error) {
-      console.error("Error fetching vet profile:", error);
-      toast.error("Failed to load profile");
+        setPreviewImage(user?.avatar || null);
+        setErrors({});
     }
-  };
+}, [isOpen, profile, user]);
+
+ 
 
   const validateForm = () => {
     const newErrors = {};
@@ -176,12 +171,15 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
 
       console.log("Updating vet profile:", updateData);
 
-      await updateVetProfile(updateData);
+      const response = await updateVetProfile(updateData);
 
-      toast.success("Profile updated successfully!");
-      setLoading(false);
-      onClose();
-      onSuccess();
+if (response.data.success) {
+    dispatch(setMyProfile(response.data.vet));
+
+    toast.success("Profile updated successfully!");
+    setLoading(false);
+    onClose();
+}
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error(error.response?.data?.message || "Failed to update profile");
@@ -250,7 +248,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
               {/* PHONE & CITY */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <Phone size={18} />
                     Phone *
                   </label>
@@ -266,7 +264,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <MapPin size={18} />
                     City *
                   </label>
@@ -284,7 +282,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
 
               {/* ADDRESS */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <MapPin size={18} />
                   Full Address *
                 </label>
@@ -302,7 +300,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
               {/* EXPERIENCE & CONSULTATION FEE */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <Briefcase size={18} />
                     Experience (years)
                   </label>
@@ -350,7 +348,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
 
               {/* SPECIALIZATIONS */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <label className=" text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                   <Award size={18} />
                   Specializations
                 </label>

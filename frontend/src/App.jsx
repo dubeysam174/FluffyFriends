@@ -3,6 +3,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "./store/slices/authSlice";
 
+
+
 //these are routes...
 import LoginPage from "./pages/LoginPage";
 import Register from "./pages/Register";
@@ -31,6 +33,7 @@ function App() {
   return (
     <>
       <Navbar/>
+    
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/" element={<Home />} />

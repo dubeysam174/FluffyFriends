@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
-import { selectAppointments,setAppointments } from "../../store/slices/appointmentSlice";
-import { selectPets,
-  setPets, } from "../../store/slices/petSlice";
-import API from "../../api/axios";
-import { MapPin,
+import {
+  selectAppointments,
+  setAppointments,
+} from "../../store/slices/appointmentSlice";
+import { selectPets, setPets } from "../../store/slices/petSlice";
+import { getMyPets } from "../../api/petAPI";
+import { getMyAppointments } from "../../api/appointmentAPI";
+import {
+  MapPin,
   CalendarDays,
   Clock3,
   MessageSquare,
@@ -15,93 +19,107 @@ import { MapPin,
   MessageCirclePlus,
   ChevronRight,
   Stethoscope,
-  Syringe,CalendarDaysIcon,MessageCirclePlusIcon  } from "lucide-react";
+  Syringe,
+  CalendarDaysIcon,
+  MessageCirclePlusIcon,
+} from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout";
+import toast from "react-hot-toast";
 
 const PetOwnerDashboard = () => {
-  const user=useSelector(selectUser)
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
 
-const pets = useSelector(selectPets);
-const appointments = useSelector(selectAppointments);
+  const pets = useSelector(selectPets);
+  const appointments = useSelector(selectAppointments);
 
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-useEffect(() => {
-  const fetchDashboardData = async () => {
-    try {
-      console.log("Fetching pets...");
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        console.log("Fetching dashboard data...");
 
-      const [petRes, appointmentRes] = await Promise.all([
-  API.get("/pets/my-pets"),
-  API.get("/appointments/my-appointments"),
-]);
+        // ✅ CALL BOTH APIs
+        const [petRes, appointmentRes] = await Promise.all([
+          getMyPets(),
+          getMyAppointments(),
+        ]);
 
-      console.log("Appointments:", appointmentRes.data);
+        console.log("Pets:", petRes.data);
+        console.log("Appointments:", appointmentRes.appointments);
 
-      dispatch(setPets(petRes.data.pets));
-      dispatch(setAppointments(appointmentRes.data.appointments));
+        // ✅ SAVE TO REDUX
+     dispatch(setPets(petRes.data.pets || []));  // ← Extract .pets
+dispatch(setAppointments(appointmentRes.appointments || []));
 
-    } catch (err) {
-      console.log("Actual Error:", err);
-    }
-  };
+        setError(null);
+      } catch (err) {
+        console.log("Error fetching dashboard:", err);
+        setError("Failed to load dashboard data");
+        toast.error("Failed to load dashboard");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchDashboardData();
-}, [dispatch]);
+    fetchDashboardData();
+  }, [dispatch]);
 
-// ================= Dashboard Statistics =================
+  // ================= Dashboard Statistics =================
 
-const totalPets = pets.length;
+  const totalPets = pets.length;
 
-const today = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-const upcomingAppointments = appointments.filter(
-  (appointment) =>
-    new Date(appointment.date) >= today &&
-    appointment.status !== "cancelled"
-);
+  const upcomingAppointments = appointments.filter((appointment) => {
+    const appointmentDate = new Date(appointment.date);
+    appointmentDate.setHours(0, 0, 0, 0);
+    return appointmentDate >= today && appointment.status !== "cancelled";
+  });
 
-const completedAppointments = appointments.filter(
-  (appointment) => appointment.status === "completed"
-);
-
-const cancelledAppointments = appointments.filter(
-  (appointment) => appointment.status === "cancelled"
-);
-
-const trustedVets = new Set(
-  appointments.map((appointment) => appointment.vet?._id)
-).size;
-
-const recentAppointments = [...appointments]
-  .sort((a, b) => new Date(b.date) - new Date(a.date))
-  .slice(0, 5);
-
-// ================= Loading =================
-
-if (loading) {
-  return (
-    <DashboardLayout>
-      <div className="flex justify-center items-center h-[60vh]">
-        <h2 className="text-2xl font-semibold">Loading...</h2>
-      </div>
-    </DashboardLayout>
+  const completedAppointments = appointments.filter(
+    (appointment) => appointment.status === "completed"
   );
-}
 
-// ================= Error =================
-
-if (error) {
-  return (
-    <DashboardLayout>
-      <div className="flex justify-center items-center h-[60vh]">
-        <h2 className="text-2xl text-red-600">{error}</h2>
-      </div>
-    </DashboardLayout>
+  const cancelledAppointments = appointments.filter(
+    (appointment) => appointment.status === "cancelled"
   );
-}
+
+  const trustedVets = new Set(
+    appointments.map((appointment) => appointment.vet?._id)
+  ).size;
+
+  const recentAppointments = [...appointments]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
+
+  // ================= Loading =================
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-[60vh]">
+          <h2 className="text-2xl font-semibold text-gray-600">Loading...</h2>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // ================= Error =================
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="flex justify-center items-center h-[60vh]">
+          <h2 className="text-2xl text-red-600">{error}</h2>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>

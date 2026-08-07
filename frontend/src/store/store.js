@@ -8,6 +8,7 @@ import appointmentReducer from './slices/appointmentSlice'
 export const store = configureStore({
     reducer: {
         auth: authReducer,
+       
         vet: vetReducer,
         pet:petReducer,
         appointment: appointmentReducer

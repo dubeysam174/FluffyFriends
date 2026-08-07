@@ -22,6 +22,17 @@ const petSlice = createSlice({
     setSelectedPet: (state, action) => {
       state.selectedPet = action.payload;
     },
+    updatePet: (state, action) => {
+    state.pets = state.pets.map((pet) =>
+        pet._id === action.payload._id ? action.payload : pet
+    );
+},
+
+removePet: (state, action) => {
+    state.pets = state.pets.filter(
+        (pet) => pet._id !== action.payload
+    );
+},
 
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -41,7 +52,9 @@ export const {
   setSelectedPet,
   setLoading,
   setError,
-  clearPetState
+  clearPetState,
+  updatePet,
+  removePet
 } = petSlice.actions;
 
 export default petSlice.reducer;

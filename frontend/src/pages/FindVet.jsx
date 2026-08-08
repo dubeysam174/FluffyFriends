@@ -5,6 +5,7 @@ import VetList from "../components/FindVet/VetList";
 import { getNearbyVets, searchVets, getAllVets } from "../api/vetAPI";
 import toast from "react-hot-toast";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import { getCurrentLocation } from "../utils/geoLocation";
 
 const FindVet = () => {
   const [vets, setVets] = useState([]);
@@ -16,52 +17,62 @@ const FindVet = () => {
   const [viewType, setViewType] = useState("grid");
 
   // Get user's location on mount
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          fetchNearbyVets(
-            position.coords.latitude,
-            position.coords.longitude
-          );
-        },
-        (error) => {
-          console.log("Location error:", error);
-          fetchAllVets();
-        }
-      );
-    }
+   useEffect(() => {
+    getUserLocation();
   }, []);
 
-  const fetchNearbyVets = async (latitude, longitude) => {
-    try {
-      setLoading(true);
-      const response = await getNearbyVets(latitude, longitude, 50);
-      let vetsData = response.data || [];
+  const getUserLocation = async () => {
+  try {
+    const location = await getCurrentLocation();
+    console.log("📍 User Location:", location);
+    
+    // ✅ CORRECT - Extract values
+    setUserLocation({
+      lat: location.latitude,
+      lng: location.longitude,
+    });
+    
+    // ✅ CORRECT - Pass individual values
+    fetchNearbyVets(
+      location.latitude,      // Not location!
+      location.longitude,     // Not location!
+      50000
+    );
+    toast.success("Location enabled");
+  } catch (error) {
+    console.error("❌ Location error:", error);
+    toast.error("Enable location to find nearby vets");
+    fetchAllVets();
+  }
+};
 
-      vetsData = vetsData.filter((v) => (v.rating || 0) >= minRating);
+ const fetchNearbyVets = async (latitude, longitude) => {
+  try {
+    setLoading(true);
+    
+    // ✅ CORRECT - Pass individual parameters
+    const response = await getNearbyVets(latitude, longitude, 50000);
+    
+    console.log("🏥 Nearby vets response:", response);
+    
+    let vetsData = response.vets || [];
 
-      if (sortBy === "rating") {
-        vetsData.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-      } else if (sortBy === "experience") {
-        vetsData.sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
-      } else if (sortBy === "name") {
-        vetsData.sort((a, b) => a.name.localeCompare(b.name));
-      }
+    vetsData = vetsData.filter((v) => (v.rating || 0) >= minRating);
 
-      setVets(vetsData);
-      setError(null);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching vets:", err);
-      setError("Failed to load vets");
-      setLoading(false);
+    if (sortBy === "rating") {
+      vetsData.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     }
-  };
+
+    setVets(vetsData);
+    setError(null);
+  } catch (err) {
+    console.error("Error fetching vets:", err);
+    setError("Failed to load vets");
+    toast.error("Failed to find nearby vets");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchAllVets = async () => {
     try {

@@ -18,7 +18,7 @@ import {
 import { bookAppointment } from "../../api/appointmentAPI";
 import { getMyPets } from "../../api/petAPI";
 import toast from "react-hot-toast";
-import VetProfile from "../profile/VetProfile";
+import VetProfileDialog from "./VetProfileVeiw";
 
 const VetCard = ({ vet }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -44,14 +44,17 @@ const VetCard = ({ vet }) => {
   }, [isBookingOpen]);
 
   const fetchPets = async () => {
-    try {
-      const response = await getMyPets();
-      setPets(response.data || []);
-    } catch (error) {
-      console.error("Error fetching pets:", error);
-      toast.error("Failed to load your pets");
-    }
-  };
+  try {
+    const response = await getMyPets();
+    console.log("Pets response:", response); // check shape once, then remove
+    const petsList = response.data?.pets || response.data || [];
+    setPets(Array.isArray(petsList) ? petsList : []);
+  } catch (error) {
+    console.error("Error fetching pets:", error);
+    toast.error("Failed to load your pets");
+    setPets([]); // ensure it never stays non-array
+  }
+};
 
   const timeSlots = [
     "9:00 AM",
@@ -107,14 +110,14 @@ const VetCard = ({ vet }) => {
     try {
       setLoading(true);
 
-      const appointmentData = {
-        vet: vet._id,
-        pet: formData.petId,
-        date: new Date(formData.date).toISOString(),
-        slot: formData.slot,
-        reason: formData.reason,
-        type: formData.type,
-      };
+    const appointmentData = {
+  vetId: vet._id,        // ← renamed from "vet"
+  petId: formData.petId, // ← renamed from "pet"
+  date: new Date(formData.date).toISOString(),
+  slot: formData.slot,
+  reason: formData.reason,
+  type: formData.type,
+};
 
       console.log("Booking appointment:", appointmentData);
 
@@ -215,7 +218,7 @@ const VetCard = ({ vet }) => {
             Book Appointment
           </button>
           <button
-            onClick={() => setIsProfileOpen(true)} // ← ADD THIS
+            onClick={() => setIsProfileOpen(true)}
             className="flex-1 border-2 border-red-600 text-red-600 hover:bg-red-50 font-semibold py-2 rounded-lg transition"
           >
             View Profile
@@ -223,7 +226,7 @@ const VetCard = ({ vet }) => {
         </div>
       </div>
 
-      {/* SHADCN DIALOG */}
+      {/* SHADCN DIALOG - BOOKING */}
       <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -266,18 +269,19 @@ const VetCard = ({ vet }) => {
                 Select Pet *
               </label>
               <select
-                name="petId"
-                value={formData.petId}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition"
-              >
-                <option value="">Choose a pet...</option>
-                {pets.map((pet) => (
-                  <option key={pet._id} value={pet._id}>
-                    {pet.name} ({pet.breed})
-                  </option>
-                ))}
-              </select>
+  name="petId"
+  value={formData.petId}
+  onChange={handleChange}
+  className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition"
+>
+  <option value="">Choose a pet...</option>
+  {Array.isArray(pets) &&
+    pets.map((pet) => (
+      <option key={pet._id} value={pet._id}>
+        {pet.name} ({pet.breed})
+      </option>
+    ))}
+</select>
               {errors.petId && (
                 <p className="text-red-600 text-sm mt-1">{errors.petId}</p>
               )}
@@ -316,7 +320,7 @@ const VetCard = ({ vet }) => {
 
             {/* DATE */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <Calendar size={18} />
                 Select Date *
               </label>
@@ -397,14 +401,15 @@ const VetCard = ({ vet }) => {
               </button>
             </div>
           </form>
-          {/* VET PROFILE DIALOG */}
-<VetProfileDialog
-  isOpen={isProfileOpen}
-  onClose={() => setIsProfileOpen(false)}
-  vetId={vet._id}
-/>
         </DialogContent>
       </Dialog>
+
+      {/* VET PROFILE DIALOG - separate, sibling dialog */}
+      <VetProfileDialog
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        vetId={vet._id}
+      />
     </>
   );
 };

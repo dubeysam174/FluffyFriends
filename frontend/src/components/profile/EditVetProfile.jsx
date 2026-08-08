@@ -8,15 +8,16 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { updateVetProfile, getVetProfile } from "../../api/profileAPI";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
 import { selectMyProfile, setMyProfile } from "../../store/slices/vetSlice";
 import toast from "react-hot-toast";
+import { getCurrentLocation } from "../../utils/geoLocation";
 
 const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
   const user = useSelector(selectUser);
-  const dispatch=useDispatch();
-  const profile= useSelector(selectMyProfile)
+  const dispatch = useDispatch();
+  const profile = useSelector(selectMyProfile);
   const [loading, setLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [tab, setTab] = useState("basic");
@@ -51,30 +52,31 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
   // Initialize form with vet data
   useEffect(() => {
     if (isOpen && profile) {
-        setFormData({
-            clinicName: profile.clinicName || "",
-            phone: profile.phone || "",
-            address: profile.address || "",
-            city: profile.city || "",
-            bio: profile.bio || "",
-            experience: profile.experience || "",
-            consultationFee: profile.consultationFee || "",
-            specializations: profile.specializations || [],
-            availableDays: profile.availableDays || [],
-            availableSlots: profile.availableSlots || [],
-        });
+      setFormData({
+        clinicName: profile.clinicName || "",
+        phone: profile.phone || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        bio: profile.bio || "",
+        experience: profile.experience || "",
+        consultationFee: profile.consultationFee || "",
+        specializations: profile.specializations || [],
+        availableDays: profile.availableDays || [],
+        availableSlots: profile.availableSlots || [],
+        location: profile.location || { type: "Point", coordinates: [0, 0] },  // ✅ ADD THIS
+    
+      });
 
-        setPreviewImage(user?.avatar || null);
-        setErrors({});
+      setPreviewImage(user?.avatar || null);
+      setErrors({});
     }
-}, [isOpen, profile, user]);
-
- 
+  }, [isOpen, profile, user]);
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.clinicName.trim()) newErrors.clinicName = "Clinic name is required";
+    if (!formData.clinicName.trim())
+      newErrors.clinicName = "Clinic name is required";
     if (!formData.phone.trim()) newErrors.phone = "Phone is required";
     if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, "")))
       newErrors.phone = "Phone must be 10 digits";
@@ -136,7 +138,10 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
     }
     setFormData((prev) => ({
       ...prev,
-      availableSlots: [...prev.availableSlots, { time: newSlotTime, isBooked: false }],
+      availableSlots: [
+        ...prev.availableSlots,
+        { time: newSlotTime, isBooked: false },
+      ],
     }));
     setNewSlotTime("");
   };
@@ -158,34 +163,56 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
 
       const updateData = {
         clinicName: formData.clinicName,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        bio: formData.bio,
-        experience: formData.experience,
-        consultationFee: formData.consultationFee,
-        specializations: formData.specializations,
-        availableDays: formData.availableDays,
-        availableSlots: formData.availableSlots,
+  phone: formData.phone,
+  address: formData.address,
+  city: formData.city,
+  bio: formData.bio,
+  experience: formData.experience,
+  consultationFee: formData.consultationFee,
+  specializations: formData.specializations,
+  availableDays: formData.availableDays,
+  availableSlots: formData.availableSlots,
+  coordinates: formData.location?.coordinates || [0, 0],
       };
 
       console.log("Updating vet profile:", updateData);
 
       const response = await updateVetProfile(updateData);
 
-if (response.data.success) {
-    dispatch(setMyProfile(response.data.vet));
+      if (response.data.success) {
+        dispatch(setMyProfile(response.data.vet));
 
-    toast.success("Profile updated successfully!");
-    setLoading(false);
-    onClose();
-}
+        toast.success("Profile updated successfully!");
+        setLoading(false);
+        onClose();
+      }
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error(error.response?.data?.message || "Failed to update profile");
       setLoading(false);
     }
   };
+
+  // for handling the handle the location..
+  const handleGetLocation = async () => {
+  try {
+    const location = await getCurrentLocation();
+    console.log("📍 Location captured:", location);
+
+    setFormData((prev) => ({
+      ...prev,
+      location: {
+        type: "Point",
+        coordinates: location.coordinates,
+      },
+    }));
+    
+    toast.success("Clinic location captured!");  // ✅ FIXED
+  } catch (error) {
+    console.error("Error getting location:", error);
+    toast.error("Failed to get location. Please enable location services.");
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -241,7 +268,9 @@ if (response.data.success) {
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 transition"
                 />
                 {errors.clinicName && (
-                  <p className="text-red-600 text-sm mt-1">{errors.clinicName}</p>
+                  <p className="text-red-600 text-sm mt-1">
+                    {errors.clinicName}
+                  </p>
                 )}
               </div>
 
@@ -260,7 +289,9 @@ if (response.data.success) {
                     placeholder="10-digit phone"
                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 transition"
                   />
-                  {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                  )}
                 </div>
 
                 <div>
@@ -276,9 +307,19 @@ if (response.data.success) {
                     placeholder="City"
                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 transition"
                   />
-                  {errors.city && <p className="text-red-600 text-sm mt-1">{errors.city}</p>}
+                  {errors.city && (
+                    <p className="text-red-600 text-sm mt-1">{errors.city}</p>
+                  )}
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={handleGetLocation}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition flex items-center justify-center gap-2"
+              >
+                📍 Get Clinic Location
+              </button>
 
               {/* ADDRESS */}
               <div>
@@ -294,7 +335,9 @@ if (response.data.success) {
                   rows="3"
                   className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 transition resize-none"
                 />
-                {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address}</p>}
+                {errors.address && (
+                  <p className="text-red-600 text-sm mt-1">{errors.address}</p>
+                )}
               </div>
 
               {/* EXPERIENCE & CONSULTATION FEE */}
@@ -400,7 +443,9 @@ if (response.data.success) {
 
               {/* TIME SLOTS */}
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                <h3 className="font-bold text-blue-900 mb-3">⏰ Available Time Slots</h3>
+                <h3 className="font-bold text-blue-900 mb-3">
+                  ⏰ Available Time Slots
+                </h3>
 
                 <div className="space-y-3 mb-4">
                   <input
@@ -426,7 +471,9 @@ if (response.data.success) {
                         key={index}
                         className="bg-white p-3 rounded-lg flex items-center justify-between"
                       >
-                        <p className="font-semibold text-gray-900">{slot.time}</p>
+                        <p className="font-semibold text-gray-900">
+                          {slot.time}
+                        </p>
                         <button
                           type="button"
                           onClick={() => removeSlot(index)}

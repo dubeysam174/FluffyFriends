@@ -1,17 +1,20 @@
 import API from "./axios";
 
 // Get nearby vets
-export const getNearbyVets = async (latitude, longitude, distance = 50) => {
+export const getNearbyVets = async (latitude, longitude, distance = 50000) => {
+  console.log("📍 API called with:", { latitude, longitude, distance });
+  
   try {
     const response = await API.get("/vets/nearby", {
       params: {
         latitude,
         longitude,
-        distance,
+        maxDistance: distance,
       },
     });
     return response.data;
   } catch (error) {
+    console.error("❌ API Error:", error.response?.data);
     throw error;
   }
 };

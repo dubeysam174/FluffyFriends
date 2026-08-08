@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { useSelector,useDispatch  } from "react-redux";
-import {  selectUser } from "../../store/slices/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser } from "../../store/slices/authSlice";
 import API from "../../api/axios";
-import { Users, CalendarDays, MessageSquare,Clock3,Star } from "lucide-react";
+import { Users, CalendarDays, MessageSquare, Clock3, Star } from "lucide-react";
 import DashboardLayout from "../layout/DashboardLayout";
 import {
   selectVetAppointments,
@@ -10,54 +10,91 @@ import {
   selectError,
   setVetAppointments,
   setLoading,
-  setError
+  setError,
 } from "../../store/slices/appointmentSlice";
+import { getVetAppointments } from "../../api/appointmentAPI";
+import { getVetProfile } from "../../api/profileAPI";
+
 const VetDashboard = () => {
   const user = useSelector(selectUser);
-  const dispatch= useDispatch();
-  const appointments = useSelector(selectVetAppointments)
-  const loading = useSelector(selectLoading)
-  const error = useSelector(selectError)
+  const dispatch = useDispatch();
+  const appointments = useSelector(selectVetAppointments);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
   const today = new Date().toDateString();
 
-const todaysAppointments = appointments.filter(
-  (appointment) =>
-    new Date(appointment.date).toDateString() === today
-);
+  const todaysAppointments = appointments.filter(
+    (appointment) => new Date(appointment.date).toDateString() === today
+  );
 
-  // fetching data from the backed to store in redux and maintain real..
-  useEffect(()=>{
-    const getVetAppointments= async()=>{
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchVetAppointments = async () => { // ← renamed, no more collision
       dispatch(setLoading(true));
+      dispatch(setError(null));
 
       try {
-            const res= await API.get("/appointments/vet-appointments");
-            console.log(res.data)
-            dispatch(setVetAppointments(res.data.appointments))
-      } catch (error) {
-         dispatch(
-                setError(
-                    error.response?.data?.message ||
-                    "Unable to fetch appointments"
-                )
-            );
-      }finally {
+        const data = await getVetAppointments(); // ← now correctly calls the imported API fn
+        console.log(data);
 
-            dispatch(setLoading(false));
-
+        if (isMounted) {
+          dispatch(setVetAppointments(data.appointments || [])); // ← no extra .data
         }
+      } catch (error) {
+        if (isMounted) {
+          dispatch(
+            setError(
+              error.response?.data?.message || "Unable to fetch appointments"
+            )
+          );
+        }
+      } finally {
+        if (isMounted) {
+          dispatch(setLoading(false));
+        }
+      }
+    };
 
-    }
-    getVetAppointments();
-  },[dispatch])
+    fetchVetAppointments();
 
-  // for pending requests in the vet ...
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch]);
+
+   // Fetch vet's own profile
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchVetProfile = async () => {
+      try {
+        const data = await getVetProfile();
+        console.log("Vet profile:", data);
+
+        if (isMounted) {
+          dispatch(setMyProfile(data.vet || data)); // adjust based on actual response shape
+        }
+      } catch (error) {
+        console.error("Error fetching vet profile:", error);
+        // optional: dispatch a separate profile-specific error if you want to surface it in UI
+      }
+    };
+
+    fetchVetProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch]);
+
   const pendingAppointments = appointments.filter(
-  (appointment) => appointment.status === "pending"
-);
+    (appointment) => appointment.status === "pending"
+  );
 
-// for recent patients..
-const recentPatients = appointments.slice(0, 5);
+  const recentPatients = appointments.slice(0, 5);
+
+  // ...rest of the JSX stays exactly the same
 
   return (
     <DashboardLayout>

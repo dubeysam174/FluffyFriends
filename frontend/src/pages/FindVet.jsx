@@ -34,8 +34,8 @@ const FindVet = () => {
     
     // ✅ CORRECT - Pass individual values
     fetchNearbyVets(
-      location.latitude,      // Not location!
-      location.longitude,     // Not location!
+      location.latitude,      
+      location.longitude,     
       50000
     );
     toast.success("Location enabled");

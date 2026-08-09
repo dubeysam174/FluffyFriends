@@ -22,15 +22,19 @@ const VetAppointments = () => {
   const loading = useSelector(selectLoading);
   const [filter, setFilter] = React.useState("all");
 
+  // ✅ FETCH ONLY IF EMPTY (Redux already has data from home)
   useEffect(() => {
-    fetchAppointments();
-  }, []);
+    if (!appointments || appointments.length === 0) {
+      fetchAppointments();
+    }
+  }, [appointments]);
 
   const fetchAppointments = async () => {
     try {
       dispatch(setLoading(true));
       const response = await getVetAppointments();
- dispatch(setVetAppointments(response.data?.appointments || []));    } catch (error) {
+      dispatch(setVetAppointments(response.appointments || []));  // ✅ CORRECT PATH
+    } catch (error) {
       console.error("Error fetching appointments:", error);
       toast.error("Failed to load appointments");
     } finally {
@@ -38,11 +42,12 @@ const VetAppointments = () => {
     }
   };
 
+  // ✅ After action, refetch to update Redux
   const handleConfirm = async (appointmentId) => {
     try {
       await confirmAppointment(appointmentId);
       toast.success("Appointment confirmed");
-      fetchAppointments();
+      fetchAppointments();  // ✅ Refresh Redux
     } catch (error) {
       console.error("Error confirming appointment:", error);
       toast.error("Failed to confirm appointment");
@@ -54,7 +59,7 @@ const VetAppointments = () => {
       try {
         await rejectAppointment(appointmentId);
         toast.success("Appointment rejected");
-        fetchAppointments();
+        fetchAppointments();  // ✅ Refresh Redux
       } catch (error) {
         console.error("Error rejecting appointment:", error);
         toast.error("Failed to reject appointment");
@@ -66,7 +71,7 @@ const VetAppointments = () => {
     try {
       await completeAppointment(appointmentId);
       toast.success("Appointment marked as completed");
-      fetchAppointments();
+      fetchAppointments();  // ✅ Refresh Redux
     } catch (error) {
       console.error("Error completing appointment:", error);
       toast.error("Failed to complete appointment");
@@ -82,6 +87,10 @@ const VetAppointments = () => {
   const pendingCount = appointments.filter((apt) => apt.status === "pending").length;
   const confirmedCount = appointments.filter((apt) => apt.status === "confirmed").length;
   const completedCount = appointments.filter((apt) => apt.status === "completed").length;
+
+  if (loading && appointments.length === 0) {
+    return <div className="text-center py-12">Loading...</div>;
+  }
 
   return (
     <div className="space-y-6">

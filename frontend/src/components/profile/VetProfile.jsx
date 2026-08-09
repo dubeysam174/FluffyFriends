@@ -24,34 +24,34 @@ import toast from "react-hot-toast";
 import EditVetProfile from "./EditVetProfile";
 
 const VetProfile = () => {
-const user = useSelector(selectUser);
-const dispatch= useDispatch();
-    const profile = useSelector(selectMyProfile);
-    const loading = useSelector(selectVetLoading);
+  const user = useSelector(selectUser);
+  const profile = useSelector(selectMyProfile);  
+  const loading = useSelector(selectVetLoading);
+  const [editOpen, setEditOpen] = useState(false);
+  const dispatch = useDispatch();
 
-    const [editOpen, setEditOpen] = useState(false);
-
+  // ✅ FETCH ONLY IF EMPTY
   useEffect(() => {
-    fetchVetProfile();
-  }, []);
-
-const fetchVetProfile = async () => {
-    try {
-        dispatch(setLoading(true));
-
-        const response = await getVetProfile();
-
-        if (response.data.success) {
-            dispatch(setMyProfile(response.data.vet));
-        }
-
-    } catch (error) {
-        dispatch(setError(error.message));
-        toast.error("Failed to load profile");
-    } finally {
-        dispatch(setLoading(false));
+    if (!profile) {  // Only fetch if not in Redux
+      fetchVetProfile();
     }
-};
+  }, [profile]);
+
+  const fetchVetProfile = async () => {
+    try {
+      dispatch(setLoading(true));
+      const response = await getVetProfile();
+      
+      if (response.data.success) {
+        dispatch(setMyProfile(response.data.vet));
+      }
+    } catch (error) {
+      dispatch(setError(error.message));
+      toast.error("Failed to load profile");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ const fetchVetProfile = async () => {
     );
   }
 
-  const displayData= profile || user
+  const displayData = profile || user;
 
   return (
     <div className="space-y-8">
@@ -297,7 +297,7 @@ const fetchVetProfile = async () => {
       <EditVetProfile
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
-        onSuccess={fetchVetProfile}
+        
       />
     </div>
   );

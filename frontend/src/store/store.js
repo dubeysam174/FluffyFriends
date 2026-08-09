@@ -3,6 +3,7 @@ import authReducer  from './slices/authSlice'
 import vetReducer from './slices/vetSlice'
 import petReducer from './slices/petSlice'
 import appointmentReducer from './slices/appointmentSlice'
+import vetSearchReducer from './slices/VetSearchSlice'
 
 
 export const store = configureStore({
@@ -11,7 +12,8 @@ export const store = configureStore({
        
         vet: vetReducer,
         pet:petReducer,
-        appointment: appointmentReducer
+        appointment: appointmentReducer,
+        VetSearch: vetSearchReducer
     }
 })
 

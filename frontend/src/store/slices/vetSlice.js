@@ -18,15 +18,28 @@ const vetSlice = createSlice({
         setVets: (state,action)=>{
             state.vets = action.payload
         },
-        setNearbyVets: (state,action)=>{
-            state.nearbyVets=action.payload
-        },
+      
         setSelectedVet: (state,action)=>{
             state.selectedVet=action.payload
 
         },
          setMyProfile: (state, action) => {  // ← ADD THIS
-      state.myProfile = action.payload;},
+      state.myProfile = {
+        _id: action.payload._id,
+        clinicName: action.payload.clinicName,
+        phone: action.payload.phone,
+        address: action.payload.address,
+        city: action.payload.city,
+        bio: action.payload.bio,
+        specializations: action.payload.specializations,
+        experience: action.payload.experience,
+        consultationFee: action.payload.consultationFee,
+        availableDays: action.payload.availableDays,
+        availableSlots: action.payload.availableSlots,
+        rating: action.payload.rating,
+        totalRatings: action.payload.totalRatings,
+        verificationStatus: action.payload.verificationStatus,
+        isAvailable: action.payload.isAvailable,};},
  
         setLoading: (state,action)=>{
             state.loading=action.payload
@@ -39,7 +52,7 @@ const vetSlice = createSlice({
     
 })
 
-export const {setVets,setNearbyVets,setSelectedVet,setLoading,setError,clearVetState,setMyProfile}=vetSlice.actions
+export const {setVets,setSelectedVet,setLoading,setError,clearVetState,setMyProfile}=vetSlice.actions
 export default vetSlice.reducer
 
 export const selectVets       = (state) => state.vet.vets

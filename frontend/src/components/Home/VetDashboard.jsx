@@ -14,6 +14,7 @@ import {
 } from "../../store/slices/appointmentSlice";
 import { getVetAppointments } from "../../api/appointmentAPI";
 import { getVetProfile } from "../../api/profileAPI";
+import { setMyProfile } from "../../store/slices/vetSlice";
 
 const VetDashboard = () => {
   const user = useSelector(selectUser);
@@ -64,29 +65,27 @@ const VetDashboard = () => {
   }, [dispatch]);
 
    // Fetch vet's own profile
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchVetProfile = async () => {
-      try {
-        const data = await getVetProfile();
-        console.log("Vet profile:", data);
-
-        if (isMounted) {
-          dispatch(setMyProfile(data.vet || data)); // adjust based on actual response shape
-        }
-      } catch (error) {
-        console.error("Error fetching vet profile:", error);
-        // optional: dispatch a separate profile-specific error if you want to surface it in UI
-      }
-    };
-
+ useEffect(() => {
     fetchVetProfile();
+  }, []);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [dispatch]);
+const fetchVetProfile = async () => {
+    try {
+        dispatch(setLoading(true));
+
+        const response = await getVetProfile();
+
+        if (response.data.success) {
+            dispatch(setMyProfile(response.data.vet));
+        }
+
+    } catch (error) {
+        dispatch(setError(error.message));
+        toast.error("Failed to load profile");
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
 
   const pendingAppointments = appointments.filter(
     (appointment) => appointment.status === "pending"
@@ -94,7 +93,6 @@ const VetDashboard = () => {
 
   const recentPatients = appointments.slice(0, 5);
 
-  // ...rest of the JSX stays exactly the same
 
   return (
     <DashboardLayout>

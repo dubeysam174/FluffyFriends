@@ -13,7 +13,7 @@ export const store = configureStore({
         vet: vetReducer,
         pet:petReducer,
         appointment: appointmentReducer,
-        VetSearch: vetSearchReducer
+        vetSearch: vetSearchReducer
     }
 })
 

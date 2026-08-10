@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
     vets: [],
-    nearbyVets: [],
     selectedVet:null,
     myProfile: null,
     loading: false,

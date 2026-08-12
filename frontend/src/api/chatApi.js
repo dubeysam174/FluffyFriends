@@ -11,7 +11,8 @@ export const getMyConversations = async () => {
 
 export const getMessages = async (conversationId) => {
   try {
-    const response = await API.get(`/chat/messages/${conversationId}`);
+    // ✅ FIXED: /:conversationId/messages
+    const response = await API.get(`/chat/${conversationId}/messages`);
     return response.data;
   } catch (error) {
     throw error;
@@ -20,9 +21,10 @@ export const getMessages = async (conversationId) => {
 
 export const sendMessage = async (conversationId, message) => {
   try {
-    const response = await API.post(`/chat/send-message`, {
-      conversationId,
-      message,
+    const response = await API.post(`/chat/${conversationId}/message`, {
+      text: message,  // ✅ CHANGED: "message" → "text"
+      type: "text",
+      fileUrl: ""
     });
     return response.data;
   } catch (error) {
@@ -32,7 +34,8 @@ export const sendMessage = async (conversationId, message) => {
 
 export const startConversation = async (vetId) => {
   try {
-    const response = await API.post(`/chat/start-conversation`, {
+    // ✅ FIXED: /start
+    const response = await API.post(`/chat/start`, {
       participantId: vetId,
     });
     return response.data;

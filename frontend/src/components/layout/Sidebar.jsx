@@ -36,6 +36,8 @@ const GlassSidebar = ({ isOpen, setIsOpen }) => {
       dispatch(clearVetState());
       dispatch(clearPetState());
       dispatch(clearAppointmentState());
+      dispatch(clearChat()); 
+       dispatch(clearVetSearch());
 
       toast.success("Logged out successfully");
     } catch (error) {

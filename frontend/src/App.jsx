@@ -14,6 +14,7 @@ import Chat from "./pages/Chat";
 import FindVet from "./pages/FindVet";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import { SocketProvider } from "./store/SocketContext";
 
 
 
@@ -32,6 +33,9 @@ const VetRoute = ({ children }) => {
 function App() {
   return (
     <>
+    <SocketProvider>
+
+
       <Navbar/>
     
       <Routes>
@@ -47,7 +51,7 @@ function App() {
               <FindVet />
             </ProtectedRoute>
           }
-        />
+          />
         <Route
           path="/appointments"
           element={
@@ -55,7 +59,7 @@ function App() {
               <Appointments />
             </ProtectedRoute>
           }
-        />
+          />
         <Route
           path="/chat"
           element={
@@ -63,7 +67,7 @@ function App() {
               <Chat />
             </ProtectedRoute>
           }
-        />
+          />
         <Route
           path="/profile"
           element={
@@ -71,11 +75,13 @@ function App() {
               <Profile />
             </ProtectedRoute>
           }
-        />
+          />
  
 
       </Routes>
-    </>
+   
+  </SocketProvider>
+          </>
   );
 }
 

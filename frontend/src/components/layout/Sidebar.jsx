@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   LogOut,
-  Home,
   Heart,
   Calendar,
   MessageSquare,

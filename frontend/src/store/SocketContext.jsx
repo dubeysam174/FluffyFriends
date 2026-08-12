@@ -10,52 +10,53 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    if (!user) return;
+ useEffect(() => {
+  if (!user?._id) return;
 
-    const newSocket = io("http://localhost:8080", {
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5,
-    });
+  const newSocket = io("http://localhost:8080", {
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    reconnectionAttempts: 5,
+    auth: { userId: user._id }, // send identity at handshake, not just after connect
+  });
 
-    // ✅ Connection event
-    newSocket.on("connect", () => {
-      console.log("✅ Socket connected:", newSocket.id);
-      newSocket.emit("join", { userId: user._id, userRole: user.role });
-      setIsConnected(true);
-    });
+  newSocket.on("connect", () => {
+    console.log("✅ Socket connected:", newSocket.id);
+    newSocket.emit("join", { userId: user._id, userRole: user.role });
+    setIsConnected(true);
+  });
 
-    // ✅ Listen for incoming messages
-    newSocket.on("receiveMessage", (data) => {
-      console.log("📨 New message:", data);
-      // Handle in Chat.jsx via addMessage action
-    });
+  newSocket.on("receiveMessage", (data) => {
+    console.log("📨 New message:", data);
+  });
 
-    // ✅ Listen for user online status
-    newSocket.on("userOnline", (data) => {
-      console.log("👤 User online:", data);
-    });
+  newSocket.on("userOnline", (data) => {
+    console.log("👤 User online:", data);
+  });
 
-    // ✅ Error handling
-    newSocket.on("connect_error", (error) => {
-      console.error("❌ Socket error:", error);
-      setIsConnected(false);
-    });
+  newSocket.on("connect_error", (error) => {
+    console.error("❌ Socket error:", error);
+    setIsConnected(false);
+  });
 
-    // ✅ Disconnect event
-    newSocket.on("disconnect", () => {
-      console.log("❌ Socket disconnected");
-      setIsConnected(false);
-    });
+  newSocket.on("disconnect", () => {
+    console.log("❌ Socket disconnected");
+    setIsConnected(false);
+  });
 
-    setSocket(newSocket);
+  setSocket(newSocket);
 
-    return () => {
-      newSocket.close();
-    };
-  }, [user]);
+  return () => {
+    // ✅ explicitly tell the server this user's socket is leaving
+    // before tearing down, so it can't still be in old rooms
+    newSocket.emit("leave", { userId: user._id });
+    newSocket.removeAllListeners();
+    newSocket.close();
+    setSocket(null);
+    setIsConnected(false);
+  };
+}, [user?._id]); // ✅ key off the id, not the object reference
 
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>

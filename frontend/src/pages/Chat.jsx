@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../store/slices/authSlice";
 import {
@@ -19,7 +19,21 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import { Send, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
 
+
+const getOtherParticipant = (conversation, currentUserId) => {
+  if (!conversation) return null;
+  if (conversation.otherParticipant) return conversation.otherParticipant;
+  if (conversation.participantName) {
+    return { name: conversation.participantName };
+  }
+  const other = conversation.participants?.find(
+    (p) => (p?._id || p) !== currentUserId
+  );
+  return other || null;
+};
+
 const Chat = () => {
+
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const conversations = useSelector(selectConversations);
@@ -29,26 +43,43 @@ const Chat = () => {
   const { socket } = useSocket();
 
   const [messageInput, setMessageInput] = useState("");
+  const [sending, setSending] = useState(false); // ✅ separate from the shared `loading` flag
 
-  // ✅ Fetch conversations once on mount
+
+  const lastUserIdRef = useRef(null);
+
+  
   useEffect(() => {
-    if (conversations.length === 0 && !loading) {
-      fetchConversations();
-    }
-  }, []);
+    const previousId = lastUserIdRef.current;
+    const currentId = user?._id || null;
 
-  // ✅ Listen for real-time messages
+    if (previousId && currentId && previousId !== currentId) {
+      dispatch(setConversations([]));
+      dispatch(setSelectedConversation(null));
+      dispatch(setMessages([]));
+      setMessageInput("");
+    }
+
+    lastUserIdRef.current = currentId || previousId;
+
+    fetchConversations();
+    
+  }, [user?._id]);
+
+
   useEffect(() => {
-    if (socket) {
-      socket.on("receiveMessage", (data) => {
-        console.log("📨 New message:", data);
-        dispatch(addMessage(data.message));
-      });
+    if (!socket) return;
 
-      return () => {
-        socket.off("receiveMessage");
-      };
-    }
+    const handleReceiveMessage = (data) => {
+      console.log("📨 New message:", data);
+      dispatch(addMessage(data.message));
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+    };
   }, [socket, dispatch]);
 
   const fetchConversations = async () => {
@@ -58,7 +89,6 @@ const Chat = () => {
       console.log("💬 Full Response:", response);
       console.log("💬 Conversations:", response.conversations);
 
-      // ✅ Extract .conversations array
       dispatch(setConversations(response.conversations || []));
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -79,7 +109,6 @@ const Chat = () => {
       console.log("📬 Messages Response:", response);
       console.log("📬 Messages:", response.messages);
 
-      // ✅ Extract .messages array
       dispatch(setMessages(response.messages || []));
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -99,23 +128,23 @@ const Chat = () => {
     }
 
     try {
-      dispatch(setLoading(true));
+      setSending(true); // ✅ no longer blocked by unrelated fetches
       const response = await sendMessage(
         selectedConversation._id,
         messageInput
       );
       console.log("✅ Message sent:", response);
 
-      // ✅ Emit via Socket.io for real-time
+      const sentMessage = response.message || response;
+
       if (socket) {
         socket.emit("sendMessage", {
           conversationId: selectedConversation._id,
-          message: response.message || response,
+          message: sentMessage,
         });
       }
 
-      // ✅ Add to Redux
-      dispatch(addMessage(response.message || response));
+      dispatch(addMessage(sentMessage));
       setMessageInput("");
       toast.success("Message sent");
     } catch (error) {
@@ -123,7 +152,7 @@ const Chat = () => {
       dispatch(setError(error.message));
       toast.error("Failed to send message");
     } finally {
-      dispatch(setLoading(false));
+      setSending(false);
     }
   };
 
@@ -145,26 +174,25 @@ const Chat = () => {
             </div>
           ) : (
             <div className="space-y-2">
-              {conversations.map((conversation) => (
-                <div
-                  key={conversation._id}
-                  onClick={() => handleSelectConversation(conversation)}
-                  className={`p-4 rounded-lg cursor-pointer transition ${
-                    selectedConversation?._id === conversation._id
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-50 hover:bg-gray-100 text-gray-900"
-                  }`}
-                >
-                  <h3 className="font-bold">
-                    {conversation.participantName || 
-                     conversation.participants?.[0]?.name ||
-                     "User"}
-                  </h3>
-                  <p className="text-sm opacity-75 truncate">
-                    {conversation.lastMessage || "No messages yet"}
-                  </p>
-                </div>
-              ))}
+              {conversations.map((conversation) => {
+                const other = getOtherParticipant(conversation, user?._id);
+                return (
+                  <div
+                    key={conversation._id}
+                    onClick={() => handleSelectConversation(conversation)}
+                    className={`p-4 rounded-lg cursor-pointer transition ${
+                      selectedConversation?._id === conversation._id
+                        ? "bg-red-600 text-white"
+                        : "bg-gray-50 hover:bg-gray-100 text-gray-900"
+                    }`}
+                  >
+                    <h3 className="font-bold">{other?.name || "User"}</h3>
+                    <p className="text-sm opacity-75 truncate">
+                      {conversation.lastMessage || "No messages yet"}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -176,9 +204,8 @@ const Chat = () => {
               {/* HEADER */}
               <div className="border-b pb-4 mb-4">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedConversation.participantName || 
-                   selectedConversation.participants?.[0]?.name ||
-                   "User"}
+                  {getOtherParticipant(selectedConversation, user?._id)?.name ||
+                    "User"}
                 </h2>
                 <p className="text-sm text-gray-600">Online</p>
               </div>
@@ -190,29 +217,33 @@ const Chat = () => {
                     <p className="text-gray-600">Start a conversation!</p>
                   </div>
                 ) : (
-                  messages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex ${
-                        msg.sender === user._id
-                          ? "justify-end"
-                          : "justify-start"
-                      }`}
-                    >
+                  messages.map((msg) => {
+                    const senderId = msg.sender?._id || msg.sender;
+                    const isOwn = senderId === user?._id;
+                    const key = msg._id || `${senderId}-${msg.createdAt}-${msg.text}`;
+
+                    return (
                       <div
-                        className={`max-w-xs px-4 py-2 rounded-lg ${
-                          msg.sender === user._id
-                            ? "bg-red-600 text-white"
-                            : "bg-gray-100 text-gray-900"
-                        }`}
+                        key={key}
+                        className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
                       >
-                        <p>{msg.text || msg.content}</p>  {/* ✅ FIXED: text field */}
-                        <p className="text-xs opacity-75 mt-1">
-                          {new Date(msg.createdAt).toLocaleTimeString()}
-                        </p>
+                        <div
+                          className={`max-w-xs px-4 py-2 rounded-lg ${
+                            isOwn
+                              ? "bg-red-600 text-white"
+                              : "bg-gray-100 text-gray-900"
+                          }`}
+                        >
+                          <p>{msg.text || msg.content}</p>
+                          <p className="text-xs opacity-75 mt-1">
+                            {msg.createdAt
+                              ? new Date(msg.createdAt).toLocaleTimeString()
+                              : ""}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
 
@@ -224,11 +255,11 @@ const Chat = () => {
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type a message..."
                   className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-red-600 transition"
-                  disabled={loading}
+                  disabled={sending}
                 />
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={sending}
                   className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-6 py-2 rounded-lg transition font-semibold flex items-center gap-2"
                 >
                   <Send size={18} />

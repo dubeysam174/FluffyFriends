@@ -41,20 +41,33 @@ res.status(200).json({
 
 // get /api/chat/conversations...
 // in this we are finding and with the help of the populate we are  joinging wtih user and adding image and all
-export const getMyConversations = asyncHandler(async(req,res)=>{
-    const conversations = await Conversation.find({
-        participants:req.user._id,
-        isActive:true
-    })
-    .populate('participants','name email avatar role')
-    .sort({lastMessageTime:-1})
+export const getMyConversations = asyncHandler(async (req, res) => {
+  const conversations = await Conversation.find({
+    participants: req.user._id,
+    isActive: true,
+  })
+    .populate('participants', 'name email avatar role')
+    .sort({ lastMessageTime: -1 });
 
-    res.json({
-        success:true,
-        count: conversations.length,
-        conversations
-    })
-})
+  // ✅ Add an explicit "otherParticipant" per conversation, computed
+  // relative to the logged-in user — no more guessing participants[0]
+  const shaped = conversations.map((conv) => {
+    const other = conv.participants.find(
+      (p) => p._id.toString() !== req.user._id.toString()
+    );
+
+    return {
+      ...conv.toObject(),
+      otherParticipant: other || null,
+    };
+  });
+
+  res.json({
+    success: true,
+    count: shaped.length,
+    conversations: shaped,
+  });
+});
 
 
 // GET  /api/chat/:conversationId/messages

@@ -9,7 +9,7 @@ const initialState = {
 };
 
 const chatSlice = createSlice({
-  name: "chat",  // ✅ LOWERCASE (matches store key)
+  name: "chat",
   initialState,
   reducers: {
     setConversations: (state, action) => {
@@ -19,9 +19,9 @@ const chatSlice = createSlice({
       state.selectedConversation = action.payload;
     },
     setMessages: (state, action) => {
-      state.messages = action.payload;  // ✅ REPLACE, don't push
+      state.messages = action.payload;
     },
-    addMessage: (state, action) => {  // ✅ ADD THIS for real-time
+    addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
     setLoading: (state, action) => {
@@ -30,7 +30,14 @@ const chatSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
-    clearChat: () => initialState,
+    // ✅ FIXED: Reset state properly
+    clearChat: (state) => {
+      state.conversations = [];
+      state.selectedConversation = null;
+      state.messages = [];
+      state.loading = false;
+      state.error = null;
+    },
   },
 });
 
@@ -38,7 +45,7 @@ export const {
   setConversations,
   setSelectedConversation,
   setMessages,
-  addMessage,  // ✅ EXPORT THIS
+  addMessage,
   setLoading,
   setError,
   clearChat,

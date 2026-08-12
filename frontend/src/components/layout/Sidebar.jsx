@@ -5,6 +5,8 @@ import { logout, selectUser } from "../../store/slices/authSlice";
 import { clearPetState } from "../../store/slices/petSlice";
 import { clearVetState } from "../../store/slices/vetSlice";
 import { clearAppointmentState } from "../../store/slices/appointmentSlice";
+import { clearChat } from "../../store/slices/chatSlice";
+import { clearVetSearch } from "../../store/slices/VetSearchSlice";
 import API from "../../api/axios";
 import toast from "react-hot-toast";
 import {
@@ -29,21 +31,23 @@ const GlassSidebar = ({ isOpen, setIsOpen }) => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
-  const handleLogout = async () => {
-    try {
-      await API.post("/auth/logout");
-      dispatch(logout());
-      dispatch(clearVetState());
-      dispatch(clearPetState());
-      dispatch(clearAppointmentState());
-      dispatch(clearChat()); 
-       dispatch(clearVetSearch());
+const handleLogout = async () => {
+  try {
+    await API.post("/auth/logout");
+    dispatch(logout());
+    dispatch(clearVetState());
+    dispatch(clearPetState());
+    dispatch(clearAppointmentState());
+    dispatch(clearChat());
+    dispatch(clearVetSearch());
+    // ✅ Removed broken dispatch()
 
-      toast.success("Logged out successfully");
-    } catch (error) {
-      toast.error("Logout failed");
-    }
-  };
+    toast.success("Logged out successfully");
+    navigate("/login");  // ← Add this if not already
+  } catch (error) {
+    toast.error("Logout failed");
+  }
+};
 
   // Different menu items based on role
   const menuItems =

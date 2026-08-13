@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play } from "lucide-react";
 import FloatingPaws from "./FloatingPaws";
@@ -6,6 +6,22 @@ import { FaPaw, FaStar, FaUserMd } from "react-icons/fa";
 import GlassCard from "./GlassCard";
 
 const HeroSection = () => {
+
+const pawWords = ["Paw", "Pet", "Friend"];
+
+
+const [pawIndex, setPawIndex] = useState(0);
+
+useEffect(() => {
+
+  const pawTimer = setInterval(() => {
+    setPawIndex((prev) => (prev + 1) % pawWords.length);
+  }, 2500);
+
+  return () => {
+    clearInterval(pawTimer);
+  };
+}, []);
   return (
     <section className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 overflow-hidden relative">
       {/* FLOATING PAWS BACKGROUND */}
@@ -19,13 +35,20 @@ const HeroSection = () => {
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="text-gray-800">Tailored </span>
-                <span className="text-red-600">Solutions</span>
+<span className="text-red-600 hero-word-red">"Care"</span>
+      
                 <br />
                 <span className="text-gray-800">for Every </span>
-                <span className="text-orange-500">Paw</span>
+<span
+    key={pawIndex}
+    className="text-orange-500 changing-word"
+  >
+    {pawWords[pawIndex]}
+  </span>
+<br/>
                 <span className="text-gray-800"> In Your</span>
-                <br />
-                <span className="text-gray-800">Family.</span>
+               
+                <span className="text-gray-800"> Family.</span>
               </h1>
             </div>
 

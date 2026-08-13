@@ -4,6 +4,7 @@ import {
   Calendar,
   MessageSquare,
   FileText,
+  ArrowRight,
 } from "lucide-react";
 import FloatingPaws from "./FloatingPaws";
 
@@ -13,172 +14,182 @@ const FeatureSection = () => {
       icon: MapPin,
       title: "Find Nearby Vets",
       description:
-        "Discover trusted veterinarians in your area with real-time availability.",
-      color: "from-blue-500 to-cyan-500",
+        "Discover trusted veterinarians in your area and find the right care for your pet.",
+      info: "Nearby",
+      button: "Find Vet",
     },
     {
       icon: Calendar,
       title: "Easy Appointments",
       description:
-        "Book and manage appointments seamlessly with instant confirmations.",
-      color: "from-emerald-500 to-green-500",
+        "Book and manage your pet's appointments quickly and easily.",
+      info: "Quick & Easy",
+      button: "Book Now",
     },
     {
       icon: MessageSquare,
       title: "Live Chat",
       description:
-        "Connect instantly with experienced veterinarians for quick advice.",
-      color: "from-violet-500 to-purple-500",
+        "Connect with experienced veterinarians and get quick advice for your pet.",
+      info: "Available",
+      button: "Chat Now",
     },
     {
       icon: FileText,
       title: "Pet Records",
       description:
-        "Securely store your pet's medical history, prescriptions and vaccinations.",
-      color: "from-orange-500 to-red-500",
+        "Keep your pet's medical history, prescriptions and vaccinations organized.",
+      info: "Secure",
+      button: "View Records",
     },
   ];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-red-50 via-white to-orange-50 py-24 px-6">
-         {/* FLOATING PAWS BACKGROUND */}
-              <FloatingPaws />
-      {/* Background Blobs */}
-      {/* <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-red-300/30 blur-3xl "></div>
+    <section className="relative overflow-hidden bg-[#fffafa] px-6 py-20">
+      {/* Background paws */}
+      <FloatingPaws />
 
-      <div className="absolute top-40 right-0 h-96 w-96 rounded-full bg-orange-300/30 blur-3xl  animation-delay-2000"></div>
-
-      <div className="absolute bottom-0 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-pink-300/20 blur-3xl"></div> */}
-
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className=" z-10 mx-auto max-w-6xl">
         {/* Heading */}
+ <div className="relative">
 
-        <div className="mb-16 text-center">
-          <span className="rounded-full bg-red-100 px-4 py-2 text-sm font-semibold text-red-600">
-            WHY CHOOSE US
-          </span>
 
-          <h2 className="mt-6 text-4xl font-extrabold text-gray-900 md:text-5xl">
-            Everything Your Pet
-            <span className="text-red-600"> Needs</span>
-          </h2>
+  <div className="relative h-36 md:h-40">
+  <img
+    src="/hero.png"
+    alt="Dog"
+    
+      className="absolute bottom-[-105px] left-[20%] z-30 w-[200px]"
+  />
+</div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
-            FluffyFriends brings veterinary care, appointments, medical
-            records, and instant chat together in one secure platform.
-          </p>
-        </div>
+
+  {/* ==============================
+      COLORED SERVICE HEADER
+  ============================== */}
+  <div className="
+    relative
+    z-10
+    bg-red-500
+    px-6
+    py-5
+    text-center
+  ">
+
+    <p className="
+      text-xs
+      font-semibold
+      text-white
+      md:text-sm
+    ">
+      What We Offer
+    </p>
+
+    <h2 className="
+      mt-1
+      text-3xl
+      font-extrabold
+      text-white
+      md:text-4xl
+    ">
+      Our Services
+    </h2>
+
+  </div>
+
+</div>
 
         {/* Cards */}
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-x-14 mt-5 gap-y-14 md:grid-cols-2">
           {features.map((feature, index) => {
             const Icon = feature.icon;
 
             return (
               <div key={index} className="group relative">
-                {/* Glass Card */}
-
+                {/* Icon */}
                 <div
                   className="
-                    relative
-                    h-full
-                    overflow-hidden
-                    rounded-3xl
-                    border
-                    border-white/40
-                    bg-white/20
-                    p-8
-                    backdrop-blur-2xl
-                    shadow-[0_8px_32px_rgba(31,38,135,0.15)]
+                    absolute
+                    -top-6
+                    left-6
+                    z-20
+                    flex
+                    h-14
+                    w-14
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-red-500
+                    text-white
+                    shadow-lg
+                    ring-4
+                    ring-[#fffafa]
                     transition-all
-                    duration-500
-                    hover:-translate-y-3
-                    hover:shadow-[0_20px_45px_rgba(31,38,135,0.25)]
+                    duration-300
+                    group-hover:scale-110
+                    group-hover:bg-red-600
                   "
                 >
-                  {/* Glass Shine */}
+                  <Icon size={24} />
+                </div>
 
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-white/50 via-white/10 to-transparent"></div>
+                {/* Card */}
+                <div
+                  className="
+                    min-h-[210px]
+                    rounded-2xl
+                    border
+                    border-red-100
+                    bg-white
+                    px-7
+                    pb-6
+                    pt-10
+                    shadow-sm
+                    transition-all
+                    duration-300
+                    group-hover:-translate-y-2
+                    group-hover:border-red-200
+                    group-hover:shadow-xl
+                  "
+                >
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {feature.title}
+                  </h3>
 
-                  {/* Hover Gradient */}
+                  {/* Description */}
+                  <p className="mt-3 max-w-lg text-sm leading-6 text-gray-500">
+                    {feature.description}
+                  </p>
 
-                  <div
-                    className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.color} opacity-0 transition-all duration-500 group-hover:opacity-15`}
-                  ></div>
+                  {/* Bottom */}
+                  <div className="mt-6 flex items-center justify-between">
+                    <span className="text-sm font-semibold text-red-500">
+                      {feature.info}
+                    </span>
 
-                  {/* Content */}
-
-                  <div className="relative z-10">
-                    <div
-                      className={`
-                        mb-6
-                        flex
-                        h-16
-                        w-16
-                        items-center
-                        justify-center
-                        rounded-2xl
-                        bg-gradient-to-br
-                        ${feature.color}
-                        text-white
-                        shadow-xl
-                        transition-all
-                        duration-500
-                        group-hover:scale-110
-                        group-hover:rotate-6
-                      `}
-                    >
-                      <Icon size={30} />
-                    </div>
-
-                    <h3 className="mb-4 text-xl font-bold text-gray-900">
-                      {feature.title}
-                    </h3>
-
-                    <p className="mb-6 leading-7 text-gray-600">
-                      {feature.description}
-                    </p>
-
-                    <button className="flex items-center gap-2 font-semibold text-red-600 transition-all group-hover:gap-3">
-                      Learn More
-
-                      <svg
-                        className="h-5 w-5 transition-transform group-hover:translate-x-1"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          d="M9 5l7 7-7 7"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Shine Animation */}
-
-                  <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                    <div
+                    <button
                       className="
-                        absolute
-                        -left-full
-                        top-0
-                        h-full
-                        w-1/2
-                        rotate-12
-                        bg-gradient-to-r
-                        from-transparent
-                        via-white/50
-                        to-transparent
+                        flex
+                        items-center
+                        gap-1.5
+                        rounded-full
+                        bg-red-500
+                        px-4
+                        py-2
+                        text-xs
+                        font-semibold
+                        text-white
                         transition-all
-                        duration-1000
-                        group-hover:left-[150%]
+                        duration-200
+                        hover:bg-red-600
+                        group-hover:gap-2.5
                       "
-                    ></div>
+                    >
+                      {feature.button}
+
+                      <ArrowRight size={14} />
+                    </button>
                   </div>
                 </div>
               </div>

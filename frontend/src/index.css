@@ -123,3 +123,34 @@ body {
   }
 }
 
+
+/* this is for animation of words below is the css for that .. */
+
+.hero-word-red,
+.hero-word-orange {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: heroWordAppear 0.7s ease-out forwards;
+}
+
+.hero-word-red {
+  animation-delay: 0.5s;
+}
+
+.hero-word-orange {
+  animation-delay: 0.9s;
+}
+
+@keyframes heroWordAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

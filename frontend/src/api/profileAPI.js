@@ -12,9 +12,19 @@ export const getUserProfile = async () => {
 
 export const updateUserProfile = async (data) => {
   try {
-    const response = await API.put("/user/profile", data);
-    return response;
+    const response = await API.put(
+      "/user/update-profile",  // ✅ FIXED: /update-profile (not /profile)
+      data,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    
+    return response.data;
   } catch (error) {
+    console.error("Profile update error:", error);
     throw error;
   }
 };

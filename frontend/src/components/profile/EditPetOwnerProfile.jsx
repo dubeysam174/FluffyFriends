@@ -72,68 +72,72 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Validate file
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please select an image file");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-        // For now, keep as base64. In production, upload to Cloudinary
-        setFormData((prev) => ({
-          ...prev,
-          avatar: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+  const file = e.target.files[0];
+  console.log("📁 File selected:", file);  // ← ADD THIS
+  
+  if (file) {
+    // Validate file
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
     }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    try {
-      setLoading(true);
-
-      const updateData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        city: formData.city,
-      };
-
-      // Only include avatar if it changed
-      if (formData.avatar && formData.avatar !== user?.avatar) {
-        updateData.avatar = formData.avatar;
-      }
-
-      console.log("Updating profile with data:", updateData);
-
-      const response = await updateUserProfile(updateData);
-      dispatch(updateUser(response.data.user))  // ← Extract .user only
-
-
-
-      toast.success("Profile updated successfully!");
-      setLoading(false);
-      onClose();
-      onSuccess();
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
-      setLoading(false);
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
     }
-  };
+
+    // ✅ Preview only (don't convert to base64)
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result);  // For preview only
+    };
+    reader.readAsDataURL(file);
+
+    // ✅ Store actual File object (not base64!)
+    setFormData((prev) => ({
+      ...prev,
+      avatar: file,  // ← KEEP AS FILE OBJECT
+    }));
+  }
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) return;
+
+  try {
+    setLoading(true);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('city', formData.city);
+
+    if (formData.avatar instanceof File) {
+      console.log("📁 File to upload:", formData.avatar);  // ← ADD THIS
+      formDataToSend.append('avatar', formData.avatar);
+    }
+
+    console.log("Updating profile...");
+
+    const response = await updateUserProfile(formDataToSend);
+    
+    console.log("Profile response:", response);  // ← Debug
+    
+    // ✅ FIXED: response already HAS .user (it's the data object)
+    dispatch(updateUser(response.user));
+
+    toast.success("Profile updated successfully!");
+    setLoading(false);
+    onClose();
+    onSuccess();
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    toast.error(error.response?.data?.message || "Failed to update profile");
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -175,7 +179,7 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
 
           {/* NAME */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <User size={18} />
               Full Name *
             </label>
@@ -192,7 +196,7 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
 
           {/* EMAIL */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <Mail size={18} />
               Email *
             </label>
@@ -209,7 +213,7 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
 
           {/* PHONE */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <Phone size={18} />
               Phone Number
             </label>
@@ -226,7 +230,7 @@ const EditPetOwnerProfile = ({ isOpen, onClose, onSuccess }) => {
 
           {/* CITY */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <label className=" text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <MapPin size={18} />
               City *
             </label>

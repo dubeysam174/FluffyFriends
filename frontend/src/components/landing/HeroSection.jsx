@@ -6,22 +6,19 @@ import { FaPaw, FaStar, FaUserMd } from "react-icons/fa";
 import GlassCard from "./GlassCard";
 
 const HeroSection = () => {
+  const pawWords = ["Paw", "Pet", "Friend"];
 
-const pawWords = ["Paw", "Pet", "Friend"];
+  const [pawIndex, setPawIndex] = useState(0);
 
+  useEffect(() => {
+    const pawTimer = setInterval(() => {
+      setPawIndex((prev) => (prev + 1) % pawWords.length);
+    }, 2500);
 
-const [pawIndex, setPawIndex] = useState(0);
-
-useEffect(() => {
-
-  const pawTimer = setInterval(() => {
-    setPawIndex((prev) => (prev + 1) % pawWords.length);
-  }, 2500);
-
-  return () => {
-    clearInterval(pawTimer);
-  };
-}, []);
+    return () => {
+      clearInterval(pawTimer);
+    };
+  }, []);
   return (
     <section className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 overflow-hidden relative">
       {/* FLOATING PAWS BACKGROUND */}
@@ -35,19 +32,16 @@ useEffect(() => {
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                 <span className="text-gray-800">Tailored </span>
-<span className="text-red-600 hero-word-red">"Care"</span>
-      
+                <span className="text-red-600 hero-word-red">"Care"</span>
+
                 <br />
                 <span className="text-gray-800">for Every </span>
-<span
-    key={pawIndex}
-    className="text-orange-500 changing-word"
-  >
-    {pawWords[pawIndex]}
-  </span>
-<br/>
+                <span key={pawIndex} className="text-orange-500 changing-word">
+                  {pawWords[pawIndex]}
+                </span>
+                <br />
                 <span className="text-gray-800"> In Your</span>
-               
+
                 <span className="text-gray-800"> Family.</span>
               </h1>
             </div>
@@ -91,9 +85,9 @@ useEffect(() => {
 
                   {/* Inner Circle */}
                   <div className="absolute w-[260px] h-[260px] rounded-full bg-red-500">
-              <img
-  src="/hero4.png"
-  className="
+                    <img
+                      src="/hero4.png"
+                      className="
     absolute
     bottom-4
     left-1/2
@@ -103,7 +97,7 @@ useEffect(() => {
     z-20
     drop-shadow-[0_25px_35px_rgba(0,0,0,0.25)]
   "
-/>
+                    />
                   </div>
                 </div>
               </div>

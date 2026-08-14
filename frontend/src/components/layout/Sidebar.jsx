@@ -639,29 +639,17 @@ const GlassSidebar = ({ isOpen, setIsOpen }) => {
             >
 
               {/* AVATAR */}
-              <div className="
-                w-10
-                h-10
-
-                rounded-full
-
-                bg-red-100
-
-                text-red-500
-
-                flex
-                items-center
-                justify-center
-
-                font-bold
-
-                flex-shrink-0
-
-                border
-                border-red-200
-              ">
-                {user?.name?.[0]?.toUpperCase() || "U"}
-              </div>
+             <div className="w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center font-bold flex-shrink-0 border border-red-200">
+  {user?.avatar ? (
+    <img
+      src={user.avatar}
+      alt={user.name}
+      className="w-10 h-10 rounded-full object-cover"
+    />
+  ) : (
+    user?.name?.charAt(0).toUpperCase()  // Fallback to initial
+  )}
+</div>
 
               {/* USER INFORMATION */}
               {isOpen && (

@@ -361,44 +361,51 @@ const Chat = () => {
                   )}
 
                   {/* AVATAR */}
-                  <div className="relative flex-shrink-0">
+                 <div className="relative flex-shrink-0">
+  <div
+    className={`
+      flex
+      h-12
+      w-12
+      items-center
+      justify-center
+      rounded-full
+      text-sm
+      font-bold
+      overflow-hidden
+      ${
+        isSelected
+          ? "bg-red-500 text-white"
+          : "bg-red-100 text-red-500"
+      }
+    `}
+  >
+    {other?.avatar ? (
+      <img
+        src={other.avatar}
+        alt={other.name}
+        className="w-12 h-12 object-cover"
+      />
+    ) : (
+      other?.name?.charAt(0).toUpperCase()  // ✅ Fallback to initial
+    )}
+  </div>
 
-                    <div
-                      className={`
-                        flex
-                        h-12
-                        w-12
-                        items-center
-                        justify-center
-                        rounded-full
-                        text-sm
-                        font-bold
-
-                        ${
-                          isSelected
-                            ? "bg-red-500 text-white"
-                            : "bg-red-100 text-red-500"
-                        }
-                      `}
-                    >
-                      {other?.name?.[0]?.toUpperCase() || "U"}
-                    </div>
-
-                    {/* ONLINE DOT */}
-                    <span
-                      className="
-                        absolute
-                        bottom-0
-                        right-0
-                        h-3.5
-                        w-3.5
-                        rounded-full
-                        border-2
-                        border-white
-                        bg-green-500
-                      "
-                    />
-                  </div>
+  {/* ONLINE DOT */}
+  <span
+    className="
+      absolute
+      bottom-0
+      right-0
+      h-3.5
+      w-3.5
+      rounded-full
+      border-2
+      border-white
+      bg-green-500
+    "
+  />
+</div>
 
                   {/* USER INFO */}
                   <div className="min-w-0 flex-1">
@@ -486,40 +493,51 @@ const Chat = () => {
 
               {/* AVATAR */}
               <div className="relative">
+  <div
+    className="
+      flex
+      h-11
+      w-11
+      items-center
+      justify-center
+      rounded-full
+      bg-red-100
+      font-bold
+      text-red-500
+      overflow-hidden
+    "
+  >
+    {getOtherParticipant(
+      selectedConversation,
+      user?._id
+    )?.avatar ? (
+      <img
+        src={getOtherParticipant(selectedConversation, user?._id)?.avatar}
+        alt="avatar"
+        className="w-11 h-11 object-cover"
+      />
+    ) : (
+      getOtherParticipant(
+        selectedConversation,
+        user?._id
+      )?.name?.[0]?.toUpperCase() || "U"
+    )}
+  </div>
 
-                <div
-                  className="
-                    flex
-                    h-11
-                    w-11
-                    items-center
-                    justify-center
-                    rounded-full
-                    bg-red-100
-                    font-bold
-                    text-red-500
-                  "
-                >
-                  {getOtherParticipant(
-                    selectedConversation,
-                    user?._id
-                  )?.name?.[0]?.toUpperCase() || "U"}
-                </div>
-
-                <span
-                  className="
-                    absolute
-                    bottom-0
-                    right-0
-                    h-3
-                    w-3
-                    rounded-full
-                    border-2
-                    border-white
-                    bg-green-500
-                  "
-                />
-              </div>
+  <span
+    className="
+      absolute
+      bottom-0
+      right-0
+      h-3
+      w-3
+      rounded-full
+      border-2
+      border-white
+      bg-green-500
+    "
+  />
+</div>
 
               <div>
                 <h2 className="font-semibold text-gray-900">

@@ -27,13 +27,13 @@ const FindVet = () => {
   const [viewType, setViewType] = useState("grid");
 
   // Get user's location on mount
-  useEffect(() => {
-    if (!cachedVets || cachedVets.length === 0) {
-      getUserLocation();
-    } else {
-      setVets(cachedVets);
-    }
-  }, [cachedVets]);
+useEffect(() => {
+  if (!cachedVets || cachedVets.length === 0) {
+    getUserLocation();
+  } else {
+    setVets(cachedVets);
+  }
+}, []);  // ✅ EMPTY array - run only ONCE on mount!
 
 
  const getUserLocation = async () => {

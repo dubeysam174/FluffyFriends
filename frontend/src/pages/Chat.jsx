@@ -453,9 +453,7 @@ const Chat = () => {
       </div>
     </div>
 
-    {/* =====================================================
-        CHAT AREA
-    ====================================================== */}
+  
     <div
       className="
         hidden
@@ -473,9 +471,7 @@ const Chat = () => {
 
       {selectedConversation ? (
         <>
-          {/* =================================================
-              CHAT HEADER
-          ================================================== */}
+       
           <div
             className="
               flex
@@ -553,7 +549,7 @@ const Chat = () => {
               </div>
             </div>
 
-            {/* MORE BUTTON */}
+        
             <button
               className="
                 flex
@@ -572,9 +568,7 @@ const Chat = () => {
             </button>
           </div>
 
-          {/* =================================================
-              MESSAGES
-          ================================================== */}
+   
           <div
             className="
               flex-1
@@ -706,9 +700,6 @@ const Chat = () => {
             )}
           </div>
 
-          {/* =================================================
-              MESSAGE INPUT
-          ================================================== */}
           <div
             className="
               border-t
@@ -804,9 +795,7 @@ const Chat = () => {
           </div>
         </>
       ) : (
-        /* =================================================
-           NO CONVERSATION SELECTED
-        ================================================== */
+       
         <div className="flex h-full items-center justify-center bg-[#fffafa]">
 
           <div className="max-w-sm px-6 text-center">

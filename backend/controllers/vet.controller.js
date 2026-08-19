@@ -67,40 +67,71 @@ export const getMyVetProfile = asyncHandler(async (req, res) => {
 
 // ── PUT /api/vets/update-profile ──────────────────────────────
 export const updateVetProfile = asyncHandler(async (req, res) => {
-  const vet = await Vet.findOne({ user: req.user._id })
+  const { clinicName, phone, address, city, bio, coordinates } = req.body;
+  const vetId = req.user._id;
 
-  if (!vet) return res.status(404).json({
-    success: false,
-    message: 'Vet profile not found'
-  })
+  let vet = await Vet.findOne({ user: vetId });
 
-  const fields = [
-    'clinicName', 'phone', 'address', 'city', 'bio',
-    'specializations', 'experience', 'consultationFee',
-    'availableDays', 'availableSlots', 'isAvailable'
-  ]
+  if (!vet) {
+    return res.status(404).json({ success: false, message: "Vet not found" });
+  }
 
-  fields.forEach(field => {
-    if (req.body[field] !== undefined) {
-      vet[field] = req.body[field]
-    }
-  })
+  // Update basic info
+  if (clinicName) vet.clinicName = clinicName;
+  if (phone) vet.phone = phone;
+  if (address) vet.address = address;
+  if (city) vet.city = city;
+  if (bio) vet.bio = bio;
 
-  if (req.body.coordinates) {
-    vet.location = {
-      type:        'Point',
-      coordinates: req.body.coordinates
+  // ✅ Update vet profile photo
+  if (req.files && req.files.profilePhoto) {
+    try {
+      const file = req.files.profilePhoto[0];
+      const result = await uploadToCloudinary(
+        file.path,
+        'fluffyfriends/vet-profiles'
+      );
+      
+      // Update user avatar (doctor photo)
+      await User.findByIdAndUpdate(req.user._id, {
+        avatar: result.url,
+      });
+
+      const fs = await import('fs').then(m => m.default);
+      fs.unlinkSync(file.path);
+    } catch (error) {
+      throw new Error('Failed to upload profile photo');
     }
   }
 
-  await vet.save()
+  // ✅ Handle clinic photos
+  if (req.files && req.files.clinicPhotos) {
+    try {
+      const uploadedUrls = [];
+      for (const file of req.files.clinicPhotos) {
+        const result = await uploadToCloudinary(
+          file.path,
+          'fluffyfriends/clinic-photos'
+        );
+        uploadedUrls.push(result.url);
 
-  res.json({
+        const fs = await import('fs').then(m => m.default);
+        fs.unlinkSync(file.path);
+      }
+      vet.clinicPhotos = [...(vet.clinicPhotos || []), ...uploadedUrls];
+    } catch (error) {
+      throw new Error('Failed to upload clinic photos');
+    }
+  }
+
+  await vet.save();
+
+  res.status(200).json({
     success: true,
-    message: 'Vet profile updated',
-    vet
-  })
-})
+    message: "Profile updated successfully",
+    vet,
+  });
+});
 
 // ── GET /api/vets/nearby ──────────────────────────────────────
 export const getNearbyVets = asyncHandler(async (req, res) => {

@@ -36,37 +36,36 @@ const PetOwnerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        console.log("Fetching dashboard data...");
+ useEffect(() => {
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching dashboard data...");
 
-        // ✅ CALL BOTH APIs
-        const [petRes, appointmentRes] = await Promise.all([
-          getMyPets(),
-          getMyAppointments(),
-        ]);
+      const [petRes, appointmentRes] = await Promise.all([
+        getMyPets(),
+        getMyAppointments(),
+      ]);
 
-        console.log("Pets:", petRes.data);
-        console.log("Appointments:", appointmentRes.appointments);
+      console.log("Pets response:", petRes);  // ← Debug
+      console.log("Appointments response:", appointmentRes);  // ← Debug
 
-        // ✅ SAVE TO REDUX
-     dispatch(setPets(petRes.data.pets || []));  // ← Extract .pets
-dispatch(setAppointments(appointmentRes.appointments || []));
+      // ✅ FIXED: petRes is already { success, count, pets }
+      dispatch(setPets(petRes.pets || []));
+      dispatch(setAppointments(appointmentRes.appointments || []));
 
-        setError(null);
-      } catch (err) {
-        console.log("Error fetching dashboard:", err);
-        setError("Failed to load dashboard data");
-        toast.error("Failed to load dashboard");
-      } finally {
-        setLoading(false);
-      }
-    };
+      setError(null);
+    } catch (err) {
+      console.log("Error fetching dashboard:", err);
+      setError("Failed to load dashboard data");
+      toast.error("Failed to load dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchDashboardData();
-  }, [dispatch]);
+  fetchDashboardData();
+}, [dispatch]);
 
   // ================= Dashboard Statistics =================
 

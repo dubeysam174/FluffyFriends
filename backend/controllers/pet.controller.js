@@ -1,6 +1,7 @@
 import Pet from '../models/pet.model.js'
 import User from '../models/user.model.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
+import { uploadCloudinary,deleteFromCloudinary } from '../utils/cloudinary.js'
 
 
 
@@ -13,6 +14,28 @@ export const addPet= asyncHandler(async(req,res)=>{
         message:'Name and species are required'
     })
 
+    let photo='';
+
+    //here we will add the handle pic for pet ...
+    if(req.file){
+        try {
+            console.log('uploading pet photo');
+            const result=await uploadCloudinary(
+                req.file.path,
+                'fluffyFriends/pet-photos'
+            );
+            photo= result.url;
+            console.log("pet photo uploaded",photo)
+
+            // Delete temp file
+        const fs = await import('fs').then(m => m.default);
+        fs.unlinkSync(req.file.path);
+        } catch (error) {
+            console.error('photo upload error:',uploadError);
+            throw new Error('failed to upload pet photo')
+        }
+    }
+
      // here we will create the document if everything is upto date...
      const pet= await Pet.create({
         owner: req.user._id,
@@ -22,6 +45,7 @@ export const addPet= asyncHandler(async(req,res)=>{
         age: age || 0,
         gender: gender || 'Unknown',
         weight: weight || 0,
+        photo, // added here ...
         notes: notes || ''
 
      })
@@ -42,18 +66,31 @@ export const addPet= asyncHandler(async(req,res)=>{
 
 
 // get /api/pets/my-pets...
-export const getMyPets= asyncHandler(async(req,res)=>{
-    const pets= await Pet.find({
-        owner: req.user._id,
-        isActive:true
-    })
+export const getMyPets = asyncHandler(async (req, res) => {
+  try {
+    console.log("🔍 User:", req.user);  // ← Debug
+    console.log("🔍 User ID:", req.user?._id);  // ← Debug
+    
+    const pets = await Pet.find({
+      owner: req.user._id,
+      isActive: true,
+    });
+
+    console.log("✅ Pets found:", pets.length);  // ← Debug
 
     res.json({
-        success:true,
-        count: pets.length,
-        pets
-    })
-})
+      success: true,
+      count: pets.length,
+      pets,
+    });
+  } catch (error) {
+    console.error("❌ Error fetching pets:", error.message);  // ← Log error!
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 
 

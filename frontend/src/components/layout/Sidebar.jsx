@@ -37,24 +37,28 @@ const GlassSidebar = ({ isOpen, setIsOpen }) => {
   // -----------------------------
   // LOGOUT
   // -----------------------------
-  const handleLogout = async () => {
+ const handleLogout = async () => {
     try {
-      await API.post("/auth/logout");
+        await API.post("/auth/logout");
 
-      dispatch(logout());
-      dispatch(clearVetState());
-      dispatch(clearPetState());
-      dispatch(clearAppointmentState());
-      dispatch(clearChat());
-      dispatch(clearVetSearch());
+        toast.success("Logged out successfully");
 
-      toast.success("Logged out successfully");
-      navigate("/login");
     } catch (error) {
-      console.error("Logout error:", error);
-      toast.error("Logout failed");
+        console.error("Logout API error:", error);
+
+    } finally {
+        dispatch(logout());
+        dispatch(clearVetState());
+        dispatch(clearPetState());
+        dispatch(clearAppointmentState());
+        dispatch(clearChat());
+        dispatch(clearVetSearch());
+
+        localStorage.removeItem("token");
+
+        navigate("/login");
     }
-  };
+};
 
   // -----------------------------
   // MENU ITEMS

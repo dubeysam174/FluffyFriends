@@ -22,6 +22,7 @@ router.post('/:id/vaccination',     protect, petOwnerOnly, addVaccination)
 router.post('/:id/medical-history', protect, petOwnerOnly, addMedicalHistory)
 
 // ── Plain dynamic routes last 
+router.get('/my-pets',protect,petOwnerOnly,getMyPets)
 router.get('/:id',     protect, petOwnerOnly, getPetById)
 router.put('/:id',     protect, petOwnerOnly, updatePet)
 router.delete('/:id',  protect, petOwnerOnly, deletePet)

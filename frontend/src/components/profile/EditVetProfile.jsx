@@ -12,7 +12,9 @@ import { selectUser, updateUser } from "../../store/slices/authSlice";
 import { selectMyProfile, setMyProfile } from "../../store/slices/vetSlice";
 import toast from "react-hot-toast";
 import { getCurrentLocation } from "../../utils/geoLocation";
-import API from "../../api/axios";
+// import API from "../../api/axios";
+import { updateVetProfile ,updateUserProfile} from "../../api/profileAPI";
+import { data } from "react-router-dom";
 
 const MAX_CLINIC_PHOTOS = 5;
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -68,6 +70,7 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
   // Doctor photo (stored on User.avatar)
   const [doctorFile, setDoctorFile] = useState(null);
   const [doctorPreview, setDoctorPreview] = useState(null);
+
 
   // Clinic photos (stored on Vet.clinicPhotos)
   const [clinicFiles, setClinicFiles] = useState([]);
@@ -211,35 +214,19 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
       if (doctorFile) {
         const fd = new FormData();
         fd.append("avatar", doctorFile);
-        const { data } = await API.put("/user/update-profile", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const { data } = await updateUserProfile(fd)
         dispatch(updateUser(data.user));
       }
 
       // 2. Clinic details → Vet (JSON)
-      const { data: vetData } = await API.put("/vets/update-profile", {
-        clinicName: formData.clinicName,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        bio: formData.bio,
-        experience: formData.experience,
-        consultationFee: formData.consultationFee,
-        specializations: formData.specializations,
-        availableDays: formData.availableDays,
-        availableSlots: formData.availableSlots,
-        coordinates: formData.location?.coordinates || [0, 0],
-      });
+      const { data: vetData } = await updateVetProfile(data)
       dispatch(setMyProfile(vetData.vet));
 
       // 3. New clinic photos → Vet.clinicPhotos (Cloudinary via backend)
       if (clinicFiles.length > 0) {
         const fd = new FormData();
         clinicFiles.forEach((file) => fd.append("clinicPhotos", file));
-        const { data: photoData } = await API.put("/vets/update-profile", fd, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const { data: photoData } = await updateVetProfile(data)
         dispatch(setMyProfile(photoData.vet));
       }
 

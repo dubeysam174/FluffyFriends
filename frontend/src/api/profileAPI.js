@@ -9,7 +9,7 @@ export const getUserProfile = async () => {
 // Accepts FormData (doctor photo, name, email, city)
 export const updateUserProfile = async (formData) => {
   const response = await API.put("/user/update-profile", formData);
-  return response;
+  return response.data;
 };
 
 // PETS
@@ -49,5 +49,5 @@ export const getVetProfile = async () => {
 // Accepts a plain object (clinic details) or FormData (clinic photos)
 export const updateVetProfile = async (data) => {
   const response = await API.put("/vets/update-profile", data);
-  return response;
+  return response.data;
 };

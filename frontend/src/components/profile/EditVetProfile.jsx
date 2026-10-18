@@ -215,12 +215,12 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
         const fd = new FormData();
         fd.append("avatar", doctorFile);
         const { data } = await updateUserProfile(fd)
-        dispatch(updateUser(data.user));
+        dispatch(updateUser(data));
       }
 
       // 2. Clinic details → Vet (JSON)
       const { data: vetData } = await updateVetProfile(data)
-      dispatch(setMyProfile(vetData.vet));
+      dispatch(setMyProfile(vetData));
 
       // 3. New clinic photos → Vet.clinicPhotos (Cloudinary via backend)
       if (clinicFiles.length > 0) {

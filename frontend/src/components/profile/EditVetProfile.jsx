@@ -203,43 +203,55 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
   };
 
   // ---------- Save ----------
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      // 1. Doctor photo → User.avatar (Cloudinary via backend)
-      if (doctorFile) {
-        const fd = new FormData();
-        fd.append("avatar", doctorFile);
-        const { data } = await updateUserProfile(fd)
-        dispatch(updateUser(data));
-      }
-
-      // 2. Clinic details → Vet (JSON)
-      const { data: vetData } = await updateVetProfile(data)
-      dispatch(setMyProfile(vetData));
-
-      // 3. New clinic photos → Vet.clinicPhotos (Cloudinary via backend)
-      if (clinicFiles.length > 0) {
-        const fd = new FormData();
-        clinicFiles.forEach((file) => fd.append("clinicPhotos", file));
-        const { data: photoData } = await updateVetProfile(data)
-        dispatch(setMyProfile(photoData.vet));
-      }
-
-      toast.success("Profile updated successfully!");
-      onSuccess?.();
-      onClose();
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error(error.response?.data?.message || "Failed to update profile");
-    } finally {
-      setLoading(false);
+    // 1. Doctor photo → User.avatar
+    if (doctorFile) {
+      const fd = new FormData();
+      fd.append("avatar", doctorFile);
+      const userRes = await updateUserProfile(fd);
+      dispatch(updateUser(userRes.user));
     }
-  };
+
+    // 2. Clinic details → Vet (JSON)
+    const vetRes = await updateVetProfile({
+      clinicName: formData.clinicName,
+      phone: formData.phone,
+      address: formData.address,
+      city: formData.city,
+      bio: formData.bio,
+      experience: formData.experience,
+      consultationFee: formData.consultationFee,
+      specializations: formData.specializations,
+      availableDays: formData.availableDays,
+      availableSlots: formData.availableSlots,
+      coordinates: formData.location?.coordinates || [0, 0],
+    });
+    dispatch(setMyProfile(vetRes.vet));
+
+    // 3. New clinic photos → Vet.clinicPhotos (multipart)
+    if (clinicFiles.length > 0) {
+      const fd = new FormData();
+      clinicFiles.forEach((file) => fd.append("clinicPhotos", file));
+      const photoRes = await updateVetProfile(fd);
+      dispatch(setMyProfile(photoRes.vet));
+    }
+
+    toast.success("Profile updated successfully!");
+    onSuccess?.();
+    onClose();
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    toast.error(error.response?.data?.message || "Failed to update profile");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

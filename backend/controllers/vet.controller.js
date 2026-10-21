@@ -1,6 +1,7 @@
 import Vet          from '../models/vet.model.js'
 import User         from '../models/user.model.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
+import { uploadCloudinary } from '../utils/cloudinary.js'
 
 // ── POST /api/vets/create-profile ─────────────────────────────
 export const createVetProfile = asyncHandler(async (req, res) => {
@@ -95,7 +96,7 @@ export const updateVetProfile = asyncHandler(async (req, res) => {
     const uploadedUrls = [];
 
     for (const file of req.files) {
-      const result = await uploadToCloudinary(file.path, "fluffyfriends/clinic-photos");
+      const result = await uploadCloudinary(file.path, "fluffyfriends/clinic-photos");
       uploadedUrls.push(result.url);
       fs.unlinkSync(file.path);
     }

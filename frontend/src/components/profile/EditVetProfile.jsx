@@ -233,12 +233,13 @@ const EditVetProfile = ({ isOpen, onClose, onSuccess }) => {
       coordinates: formData.location?.coordinates || [0, 0],
     });
     dispatch(setMyProfile(vetRes.vet));
-
+  console.log("clinicFiles before photo step:", clinicFiles.length);
     // 3. New clinic photos → Vet.clinicPhotos (multipart)
     if (clinicFiles.length > 0) {
       const fd = new FormData();
       clinicFiles.forEach((file) => fd.append("clinicPhotos", file));
       const photoRes = await updateVetProfile(fd);
+      console.log(photoRes.vet)
       dispatch(setMyProfile(photoRes.vet));
     }
 

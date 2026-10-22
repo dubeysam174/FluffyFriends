@@ -38,7 +38,8 @@ const vetSlice = createSlice({
         rating: action.payload.rating,
         totalRatings: action.payload.totalRatings,
         verificationStatus: action.payload.verificationStatus,
-        isAvailable: action.payload.isAvailable,};},
+        isAvailable: action.payload.isAvailable,
+        ClinicPhotos: action.payload.ClinicPhotos};},
  
         setLoading: (state,action)=>{
             state.loading=action.payload

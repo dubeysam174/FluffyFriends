@@ -1,63 +1,69 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
-const initialState={
-    vets: [],
-    selectedVet:null,
-    myProfile: null,
-    loading: false,
-    error: null
-}
-
+const initialState = {
+  vets: [],
+  selectedVet: null,
+  myProfile: null,
+  loading: false,
+  error: null,
+};
 
 const vetSlice = createSlice({
-    name:'vet',
-    initialState,
-    reducers: {
-        setVets: (state,action)=>{
-            state.vets = action.payload
-        },
-      
-        setSelectedVet: (state,action)=>{
-            state.selectedVet=action.payload
+  name: "vet",
+  initialState,
+  reducers: {
+    setVets: (state, action) => {
+      state.vets = action.payload;
+    },
 
-        },
-         setMyProfile: (state, action) => {  // ← ADD THIS
+    setSelectedVet: (state, action) => {
+      state.selectedVet = action.payload;
+    },
+
+    setMyProfile: (state, action) => {
+      // Store the full vet document, including clinicPhotos (Cloudinary URLs)
       state.myProfile = {
-        _id: action.payload._id,
-        clinicName: action.payload.clinicName,
-        phone: action.payload.phone,
-        address: action.payload.address,
-        city: action.payload.city,
-        bio: action.payload.bio,
-        specializations: action.payload.specializations,
-        experience: action.payload.experience,
-        consultationFee: action.payload.consultationFee,
-        availableDays: action.payload.availableDays,
-        availableSlots: action.payload.availableSlots,
-        rating: action.payload.rating,
-        totalRatings: action.payload.totalRatings,
-        verificationStatus: action.payload.verificationStatus,
-        isAvailable: action.payload.isAvailable,
-        ClinicPhotos: action.payload.ClinicPhotos};},
- 
-        setLoading: (state,action)=>{
-            state.loading=action.payload
-        },
-        setError: (state,action)=>{
-            state.error=action.payload
-        },
-        clearVetState: () => initialState,
+        ...action.payload,
+        clinicPhotos: action.payload?.clinicPhotos || [],
+      };
+    },
+
+    // Remove one saved clinic photo URL after the server confirms the delete
+    removeClinicPhoto: (state, action) => {
+      if (state.myProfile) {
+        state.myProfile.clinicPhotos = state.myProfile.clinicPhotos.filter(
+          (url) => url !== action.payload
+        );
+      }
+    },
+
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+
+    clearVetState: () => initialState,
   },
-    
-})
+});
 
-export const {setVets,setSelectedVet,setLoading,setError,clearVetState,setMyProfile}=vetSlice.actions
-export default vetSlice.reducer
+export const {
+  setVets,
+  setSelectedVet,
+  setMyProfile,
+  removeClinicPhoto,
+  setLoading,
+  setError,
+  clearVetState,
+} = vetSlice.actions;
 
-export const selectVets       = (state) => state.vet.vets
-export const selectNearbyVets = (state) => state.vet.nearbyVets
-export const selectSelectedVet = (state) => state.vet.selectedVet
+export default vetSlice.reducer;
+
+export const selectVets = (state) => state.vet.vets;
+export const selectSelectedVet = (state) => state.vet.selectedVet;
 export const selectMyProfile = (state) => state.vet.myProfile;
+export const selectClinicPhotos = (state) => state.vet.myProfile?.clinicPhotos || [];
 export const selectVetLoading = (state) => state.vet.loading;
 export const selectVetError = (state) => state.vet.error;

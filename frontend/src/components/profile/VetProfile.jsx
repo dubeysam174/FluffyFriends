@@ -26,6 +26,7 @@ import EditVetProfile from "./EditVetProfile";
 const VetProfile = () => {
   const user = useSelector(selectUser);
   const profile = useSelector(selectMyProfile);  
+  const clinicPhotos = profile?.clinicPhotos || [];
   const loading = useSelector(selectVetLoading);
   const [editOpen, setEditOpen] = useState(false);
   const dispatch = useDispatch();
@@ -197,6 +198,22 @@ const VetProfile = () => {
             </div>
           )}
         </div>
+                {/* CLINIC PHOTOS */}
+{clinicPhotos.length > 0 && (
+  <div>
+    <p className="text-sm text-gray-600 mb-1 mt-2">Clinic Photos ({clinicPhotos.length}/5)</p>
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
+      {clinicPhotos.map((url, index) => (
+        <img
+          key={url}
+          src={url}
+          alt={`Clinic ${index + 1}`}
+          className="w-full h-40 object-cover rounded-lg"
+        />
+      ))}
+    </div>
+  </div>
+)}
       </div>
 
       {/* AVAILABILITY SECTION */}
@@ -279,17 +296,16 @@ const VetProfile = () => {
             <span
               className={`px-4 py-2 rounded-full text-sm font-bold ${
                 displayData?.isAvailable
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
+                }`}
+                >
               {displayData?.isAvailable ? "Available" : "Unavailable"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* CLINIC PHOTOS */}
     
     
 

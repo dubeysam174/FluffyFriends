@@ -91,6 +91,7 @@ useEffect(() => {
     try {
       setLoading(true);
       const response = await getAllVets();
+      console.log(response)
       const vetsData = response.data || [];
       setVets(vetsData);
       

@@ -140,7 +140,7 @@ export const getNearbyVets = asyncHandler(async (req, res) => {
 
   const vets = await Vet.find(query)
     .populate('user', 'name email avatar')
-    .select('-availableSlots')
+    .select('-__v')
 
   res.json({
     success: true,

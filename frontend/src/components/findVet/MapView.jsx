@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useSelector } from "react-redux";
+import { selectNearbyVets } from "../../store/slices/VetSearchSlice";
+import { getCurrentLocation } from "../../utils/geoLocation";
 
-// Fix marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -11,29 +13,59 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const MapView = ({ vets, userLocation, loading }) => {
-  // Default location (center of map)
-  const center = userLocation || { lat: 28.7041, lng: 77.1025 }; // Delhi, India
+const SHADOW = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png";
 
-  // Custom vet marker icon
-  const vetIcon = new L.Icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+// Red = clinics, Blue = you
+const vetIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl: SHADOW,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
-  // User location marker icon
-  const userIcon = new L.Icon({
-    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+const userIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+  shadowUrl: SHADOW,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+// Moves the map to a new center when it changes
+const Recenter = ({ lat, lng }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng], 13);
+  }, [lat, lng, map]);
+  return null;
+};
+
+const MapView = ({ loading }) => {
+  const vets = useSelector(selectNearbyVets) || [];
+  const [userPos, setUserPos] = useState(null);
+  const [locError, setLocError] = useState(null);
+
+  // Get the user's live location
+  useEffect(() => {
+    getCurrentLocation()
+      .then((loc) => setUserPos({ lat: loc.latitude, lng: loc.longitude }))
+      .catch(() => setLocError("Allow location access to see your position"));
+  }, []);
+
+  // Clinics with valid coordinates, [lat, lng] for Leaflet
+  const clinics = vets.filter((v) => v.location?.coordinates?.length === 2);
+
+  // Center: user's location first, then the nearest clinic, then a neutral fallback
+  let center = null;
+  if (userPos) {
+    center = userPos;
+  } else if (clinics.length > 0) {
+    const [lng, lat] = clinics[0].location.coordinates; // vets come sorted by distance
+    center = { lat, lng };
+  }
 
   if (loading) {
     return (
@@ -45,8 +77,10 @@ const MapView = ({ vets, userLocation, loading }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
+      {locError && <p className="text-sm text-red-600 px-4 pt-3">{locError}</p>}
+
       <MapContainer
-        center={[center.lat, center.lng]}
+        center={center ? [center.lat, center.lng] : [28.4595, 77.0266]}
         zoom={13}
         style={{ height: "500px", width: "100%" }}
       >
@@ -55,19 +89,17 @@ const MapView = ({ vets, userLocation, loading }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {/* USER LOCATION */}
-        {userLocation && (
-          <Marker position={[userLocation.lat, userLocation.lng]} icon={userIcon}>
+        {center && <Recenter lat={center.lat} lng={center.lng} />}
+
+        {userPos && (
+          <Marker position={[userPos.lat, userPos.lng]} icon={userIcon}>
             <Popup>
-              <div className="text-center">
-                <p className="font-semibold text-gray-900">Your Location</p>
-              </div>
+              <p className="font-semibold text-gray-900 text-center">You are here</p>
             </Popup>
           </Marker>
         )}
 
-        {/* VET LOCATIONS */}
-        {vets?.map((vet) => (
+        {clinics.map((vet) => (
           <Marker
             key={vet._id}
             position={[vet.location.coordinates[1], vet.location.coordinates[0]]}
@@ -75,17 +107,19 @@ const MapView = ({ vets, userLocation, loading }) => {
           >
             <Popup>
               <div className="text-center min-w-[200px]">
-                <img
-                  src={vet.image || "https://via.placeholder.com/200"}
-                  alt={vet.name}
-                  className="w-full h-24 object-cover rounded mb-2"
-                />
-                <p className="font-semibold text-gray-900">Dr. {vet.name}</p>
-                <p className="text-sm text-gray-600">{vet.specialization}</p>
-                <div className="flex items-center justify-center gap-1 mt-1">
-                  <span className="text-yellow-500">⭐</span>
-                  <span className="text-sm font-semibold">{vet.rating || 4.8}</span>
+                <div className="w-full h-24 rounded mb-2 overflow-hidden bg-gray-100 flex items-center justify-center">
+                  {vet.clinicPhotos?.length > 0 ? (
+                    <img src={vet.clinicPhotos[0]} alt={vet.clinicName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-sm text-gray-400">No photo</span>
+                  )}
                 </div>
+                <p className="font-semibold text-gray-900">{vet.clinicName || "Clinic"}</p>
+                {vet.user?.name && <p className="text-sm text-gray-600">Dr. {vet.user.name}</p>}
+                {vet.specializations?.length > 0 && (
+                  <p className="text-sm text-gray-600">{vet.specializations.join(", ")}</p>
+                )}
+                <p className="text-sm mt-1">⭐ {(vet.rating ?? 0).toFixed(1)}</p>
               </div>
             </Popup>
           </Marker>
